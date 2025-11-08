@@ -1,59 +1,89 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎵 Solo Artist Map
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Solo Artist Map** は、ソロアーティスト活動を支援するための Web アプリケーションです。  
+Laravel 12 をベースに構築され、Gmail API 連携などの自動メール送信機能を備えています。
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 開発環境
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Framework:** Laravel 12.x  
+- **PHP:** 8.3 以上  
+- **Database:** MySQL 8.x  
+- **Mail:** Gmail API  
+- **Node.js:** 18.x 以上（ビルド・フロントエンド用）
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## ⚙️ 初期設定手順
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+1. リポジトリをクローン
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+   ```bash
+   git clone https://github.com/kkmusic0513/soloartistmap.git
+   cd soloartistmap
+.env ファイルを作成
 
-## Laravel Sponsors
+bash
+コードをコピーする
+cp .env.example .env
+アプリケーションキーを生成
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+bash
+コードをコピーする
+php artisan key:generate
+依存パッケージをインストール
 
-### Premium Partners
+bash
+コードをコピーする
+composer install
+npm install
+Gmail API 用の認証設定
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Google Cloud Console にて「OAuth 2.0 クライアントID」を作成し、
+client_secret.json をプロジェクト直下に配置します。
 
-## Contributing
+.env に必要な情報（GOOGLE_CLIENT_ID など）を追加します。
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+開発サーバーを起動
 
-## Code of Conduct
+bash
+コードをコピーする
+php artisan serve
+💌 Gmail API 連携について
+このアプリでは、Gmail API を使用して自動メール送信を行います。
+Laravel の Google_Client を利用し、OAuth 2.0 認証を実装済みです。
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+初回認証時にトークンを生成し、storage/app/google/token.json に保存します。
 
-## Security Vulnerabilities
+トークンが失効した場合は自動的にリフレッシュされます。
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+📁 ディレクトリ構成（主要部）
+コードをコピーする
+soloartistmap/
+├── app/
+│   ├── Http/
+│   │   └── Controllers/
+│   │       └── GmailController.php
+│   └── Models/
+├── resources/
+│   └── views/
+│       └── ...
+├── routes/
+│   └── web.php
+├── storage/
+│   └── app/
+│       └── google/
+│           └── token.json
+├── .env.example
+├── composer.json
+└── README.md
+🧠 今後の予定
+ユーザー認証機能（アーティスト登録）
 
-## License
+イベント・現場カレンダー機能
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+メール通知の自動スケジュール化（Gmail API活用）
+
+📝 ライセンス
+このプロジェクトは MIT License のもとで公開されています。
