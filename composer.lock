@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3c550100ed05631b8cc16b40e7eac1d2",
+    "content-hash": "8d92b5556c5d5047f0d5f57218bcda52",
     "packages": [
         {
             "name": "brick/math",
@@ -644,35 +644,35 @@
         },
         {
             "name": "google/apiclient",
-            "version": "v2.18.0",
+            "version": "v2.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "846f149c9f879449145326dad99ef00bf1d879f3"
+                "reference": "49787fa30b8d8313146a61efbf77ed1fede723c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/846f149c9f879449145326dad99ef00bf1d879f3",
-                "reference": "846f149c9f879449145326dad99ef00bf1d879f3",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/49787fa30b8d8313146a61efbf77ed1fede723c2",
+                "reference": "49787fa30b8d8313146a61efbf77ed1fede723c2",
                 "shasum": ""
             },
             "require": {
-                "firebase/php-jwt": "^6.0",
-                "google/apiclient-services": "~0.350",
-                "google/auth": "^1.37",
-                "guzzlehttp/guzzle": "^7.4.5",
-                "guzzlehttp/psr7": "^2.6",
+                "firebase/php-jwt": "~6.0",
+                "google/apiclient-services": "~0.200",
+                "google/auth": "^1.28",
+                "guzzlehttp/guzzle": "~6.5||~7.0",
+                "guzzlehttp/psr7": "^1.8.4||^2.2.1",
                 "monolog/monolog": "^2.9||^3.0",
-                "php": "^8.0",
-                "phpseclib/phpseclib": "^3.0.36"
+                "php": "^7.4|^8.0",
+                "phpseclib/phpseclib": "^3.0.2"
             },
             "require-dev": {
                 "cache/filesystem-adapter": "^1.1",
-                "composer/composer": "^1.10.23",
+                "composer/composer": "^1.10.22",
                 "phpcompatibility/php-compatibility": "^9.2",
-                "phpspec/prophecy-phpunit": "^2.1",
-                "phpunit/phpunit": "^9.6",
-                "squizlabs/php_codesniffer": "^3.8",
+                "phpspec/prophecy-phpunit": "^2.0",
+                "phpunit/phpunit": "^9.5",
+                "squizlabs/php_codesniffer": "^3.0",
                 "symfony/css-selector": "~2.1",
                 "symfony/dom-crawler": "~2.1"
             },
@@ -707,9 +707,9 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client/issues",
-                "source": "https://github.com/googleapis/google-api-php-client/tree/v2.18.0"
+                "source": "https://github.com/googleapis/google-api-php-client/tree/v2.15.0"
             },
-            "time": "2024-10-16T21:58:58+00:00"
+            "time": "2023-05-18T13:51:33+00:00"
         },
         {
             "name": "google/apiclient-services",
@@ -1288,6 +1288,150 @@
                 }
             ],
             "time": "2025-08-22T14:27:06+00:00"
+        },
+        {
+            "name": "intervention/gif",
+            "version": "4.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Intervention/gif.git",
+                "reference": "5999eac6a39aa760fb803bc809e8909ee67b451a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Intervention/gif/zipball/5999eac6a39aa760fb803bc809e8909ee67b451a",
+                "reference": "5999eac6a39aa760fb803bc809e8909ee67b451a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^10.0 || ^11.0  || ^12.0",
+                "slevomat/coding-standard": "~8.0",
+                "squizlabs/php_codesniffer": "^3.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Intervention\\Gif\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Oliver Vogel",
+                    "email": "oliver@intervention.io",
+                    "homepage": "https://intervention.io/"
+                }
+            ],
+            "description": "Native PHP GIF Encoder/Decoder",
+            "homepage": "https://github.com/intervention/gif",
+            "keywords": [
+                "animation",
+                "gd",
+                "gif",
+                "image"
+            ],
+            "support": {
+                "issues": "https://github.com/Intervention/gif/issues",
+                "source": "https://github.com/Intervention/gif/tree/4.2.2"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/interventionio",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/Intervention",
+                    "type": "github"
+                },
+                {
+                    "url": "https://ko-fi.com/interventionphp",
+                    "type": "ko_fi"
+                }
+            ],
+            "time": "2025-03-29T07:46:21+00:00"
+        },
+        {
+            "name": "intervention/image",
+            "version": "3.11.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Intervention/image.git",
+                "reference": "8c49eb21a6d2572532d1bc425964264f3e496846"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/8c49eb21a6d2572532d1bc425964264f3e496846",
+                "reference": "8c49eb21a6d2572532d1bc425964264f3e496846",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "intervention/gif": "^4.2",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.6",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^10.0 || ^11.0 || ^12.0",
+                "slevomat/coding-standard": "~8.0",
+                "squizlabs/php_codesniffer": "^3.8"
+            },
+            "suggest": {
+                "ext-exif": "Recommended to be able to read EXIF data properly."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Intervention\\Image\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Oliver Vogel",
+                    "email": "oliver@intervention.io",
+                    "homepage": "https://intervention.io/"
+                }
+            ],
+            "description": "PHP image manipulation",
+            "homepage": "https://image.intervention.io/",
+            "keywords": [
+                "gd",
+                "image",
+                "imagick",
+                "resize",
+                "thumbnail",
+                "watermark"
+            ],
+            "support": {
+                "issues": "https://github.com/Intervention/image/issues",
+                "source": "https://github.com/Intervention/image/tree/3.11.4"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/interventionio",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/Intervention",
+                    "type": "github"
+                },
+                {
+                    "url": "https://ko-fi.com/interventionphp",
+                    "type": "ko_fi"
+                }
+            ],
+            "time": "2025-07-30T13:13:19+00:00"
         },
         {
             "name": "laravel/framework",

@@ -36,3 +36,11 @@ Route::get('/google/callback', function (Request $request, GmailService $gmailSe
 
     return '認証完了！これで Gmail API で送信できます';
 });
+
+Route::get('/artist/{id}/gallery', [ArtistController::class, 'gallery'])->name('artist.gallery');
+
+
+//各ページ確認用
+Route::get('/dev-links', function () {
+    return view('dev-links');
+})->name('dev.links');
