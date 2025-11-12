@@ -12,6 +12,9 @@ use Intervention\Image\Facades\Image;
 
 class ArtistController extends Controller
 {
+    public function __construct()
+    {
+    }
     // 登録フォーム
     public function create()
     {
@@ -106,4 +109,11 @@ class ArtistController extends Controller
         $artist = Artist::findOrFail($id);
         return view('artist.gallery', compact('artist'));
     }
+    // TOPページ用
+    public function home()
+    {
+        $artists = Artist::where('is_approved', true)->get();
+        return view('home', compact('artists'));
+    }
+
 }

@@ -26,5 +26,10 @@ class Artist extends Model
     {
         return $this->hasMany(ArtistPhoto::class);
     }
+    // app/Models/Artist.php
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }
