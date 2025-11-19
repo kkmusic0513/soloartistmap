@@ -104,6 +104,7 @@ class ArtistController extends Controller
     {
         $this->authorize('update', $artist);
 
+        // バリデーション
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'prefecture' => 'required|string|max:255',
@@ -112,26 +113,48 @@ class ArtistController extends Controller
             'youtube_link' => 'nullable|url',
             'soundcloud_link' => 'nullable|url',
             'twitter_link' => 'nullable|url',
-            'photos.*' => 'image|max:5120',
+            // 'photos.*' => 'image|max:5120',
         ]);
 
+        // アーティスト情報更新（画像は除く）
         $artist->update($validated);
 
-        // update メソッド内も同様
+        // 写真アップロード処理
         if ($request->hasFile('photos')) {
+            // dd($artist->getRawOriginal('photos'));
+            // DB にある元の JSON 文字列を取得
+            $oldPhotosRaw = $artist->getRawOriginal('photos');
 
-            $artistDir = storage_path('app/public/artists');
-            if (!file_exists($artistDir)) {
-                mkdir($artistDir, 0755, true);
+            // JSON → 配列
+            $oldPhotos = is_string($oldPhotosRaw) ? json_decode($oldPhotosRaw, true) : [];
+
+            // 配列を確認
+            if (!empty($oldPhotos)) {
+                foreach ($oldPhotos as $oldPath) {
+                    // 配列の中身が空でない文字列かチェック
+                    if (is_string($oldPath) && $oldPath !== '') {
+                        $fullPath = storage_path('app/public/' . $oldPath);
+                        
+                        // ファイルが存在するか確認
+                        if (file_exists($fullPath)) {
+                            unlink($fullPath);
+                        }
+                    }
+                }
             }
 
+
+            // 2. 新しい画像を保存
             $photoPaths = [];
+            $artistDir = storage_path('app/public/artists');
+            if (!file_exists($artistDir)) mkdir($artistDir, 0755, true);
+
             foreach ($request->file('photos') as $photo) {
                 $filename = time() . '_' . uniqid() . '.' . $photo->getClientOriginalExtension();
                 $path = $artistDir . '/' . $filename;
 
                 Image::make($photo)
-                    ->resize(1080, null, function ($constraint) {
+                    ->resize(1200, null, function ($constraint) {
                         $constraint->aspectRatio();
                         $constraint->upsize();
                     })
@@ -141,13 +164,17 @@ class ArtistController extends Controller
                 $photoPaths[] = 'artists/' . $filename;
             }
 
-            $artist->photos = json_encode($photoPaths);
+            // DB 更新（casts により自動で JSON に変換）
+            $artist->photos = $photoPaths;
             $artist->save();
-        }
 
+        }
 
         return redirect()->route('dashboard')->with('success', 'アーティスト情報を更新しました。');
     }
+
+
+
 
     public function destroy(Artist $artist)
     {
