@@ -10,14 +10,22 @@ class Artist extends Model
     use HasFactory;
     
     protected $fillable = [
-        'name', 'prefecture', 'genre', 'profile',
-        'youtube_link', 'soundcloud_link', 'twitter_link',
-        'photos',
+        'user_id',
+        'name',
+        'main_photo',
+        'sub_photo_1',
+        'sub_photo_2',
+        'prefecture',
+        'genre',
+        'profile',
+        'youtube_link',
+        'soundcloud_link',
+        'twitter_link',
     ];
 
-    protected $casts = [
-        'photos' => 'array', // JSON → 配列で取得可能
-    ];
+    // protected $casts = [
+    //     'photos' => 'array',
+    // ];
     public function scopeApproved($query)
     {
         return $query->where('is_approved', true);

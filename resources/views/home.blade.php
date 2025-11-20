@@ -5,25 +5,59 @@
         @if($artists->isEmpty())
             <p class="text-gray-500">現在、登録されているアーティストはいません。</p>
         @else
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                @foreach($artists as $artist)
-                    <a href="{{ route('artist.gallery', $artist->id) }}" class="bg-white rounded shadow hover:shadow-lg transition overflow-hidden">
-                        @if(!empty($artist->photos))
-                            @php
-                                $photos = json_decode($artist->photos, true);
-                            @endphp
-                            <img src="{{ asset('storage/' . $photos[0]) }}" alt="{{ $artist->name }}" class="w-full h-48 object-cover">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach ($artists as $artist)
+                    <div class="bg-white shadow rounded-lg overflow-hidden">
+
+                        {{-- サムネイル --}}
+                        @php
+                            // main_photo と sub_photo_1, sub_photo_2 を配列にまとめて表示
+                            $photos = array_filter([
+                                $artist->main_photo,
+                                $artist->sub_photo_1,
+                                $artist->sub_photo_2,
+                            ]);
+                        @endphp
+
+                        @if (!empty($photos))
+                            @foreach ($photos as $photo)
+                                <img src="{{ asset('storage/' . $photo) }}" class="w-full h-40 object-cover mb-2">
+                            @endforeach
                         @else
-                            <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">No Image</div>
+                            <div class="w-full h-40 bg-gray-200 flex items-center justify-center">
+                                <span class="text-gray-500">No Image</span>
+                            </div>
                         @endif
+
+                        {{-- カード本体 --}}
                         <div class="p-4">
-                            <h2 class="font-bold text-lg text-gray-800">{{ $artist->name }}</h2>
-                            <p class="text-gray-600">{{ $artist->prefecture }}</p>
-                            @if($artist->genre)
-                                <p class="text-gray-500 text-sm">{{ $artist->genre }}</p>
-                            @endif
+                            <h3 class="font-bold text-lg mb-2">{{ $artist->name }}</h3>
+
+                            {{-- ステータス --}}
+                            <span class="
+                                inline-block px-2 py-1 text-xs rounded 
+                                @if($artist->is_approved === 1) bg-green-100 text-green-700
+                                @elseif($artist->is_approved === 0) bg-yellow-100 text-yellow-700
+                                @else bg-gray-200 text-gray-700
+                                @endif
+                            ">
+                                {{ $artist->is_approved === 1 ? '公開中' : ($artist->is_approved === 0 ? '承認待ち' : '非公開') }}
+                            </span>
+
+                            {{-- 操作ボタン --}}
+                            <div class="mt-4 flex gap-2">
+                                <a href="{{ route('artist.edit', $artist->id) }}"
+                                class="text-blue-600 hover:underline">編集</a>
+
+                                <form action="{{ route('artist.destroy', $artist->id) }}" method="POST" 
+                                    onsubmit="return confirm('本当に削除しますか？');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:underline">削除</button>
+                                </form>
+                            </div>
                         </div>
-                    </a>
+                    </div>
                 @endforeach
             </div>
         @endif

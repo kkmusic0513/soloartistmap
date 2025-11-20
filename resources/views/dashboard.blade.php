@@ -42,30 +42,23 @@
 
                         {{-- サムネイル --}}
                         @php
-                            $firstPhoto = null;
-                            if ($artist->photos) {
-                                if (is_string($artist->photos)) {
-                                    $decoded = json_decode($artist->photos, true);
-                                    $firstPhoto = $decoded[0] ?? null;
-                                } elseif (is_array($artist->photos)) {
-                                    $firstPhoto = $artist->photos[0] ?? null;
-                                    // 二重配列の場合
-                                    if (is_array($firstPhoto)) {
-                                        $firstPhoto = $firstPhoto[0] ?? null;
-                                    }
-                                }
-                            }
+                            // main_photo と sub_photo_1, sub_photo_2 を配列にまとめて表示
+                            $photos = array_filter([
+                                $artist->main_photo,
+                                $artist->sub_photo_1,
+                                $artist->sub_photo_2,
+                            ]);
                         @endphp
 
-                        @if ($firstPhoto)
-                            <img src="{{ asset('storage/' . $firstPhoto) }}" class="w-full h-40 object-cover">
+                        @if (!empty($photos))
+                            @foreach ($photos as $photo)
+                                <img src="{{ asset('storage/' . $photo) }}" class="w-full h-40 object-cover mb-2">
+                            @endforeach
                         @else
                             <div class="w-full h-40 bg-gray-200 flex items-center justify-center">
                                 <span class="text-gray-500">No Image</span>
                             </div>
                         @endif
-
-
 
                         {{-- カード本体 --}}
                         <div class="p-4">
@@ -85,23 +78,21 @@
                             {{-- 操作ボタン --}}
                             <div class="mt-4 flex gap-2">
                                 <a href="{{ route('artist.edit', $artist->id) }}"
-                                   class="text-blue-600 hover:underline">編集</a>
+                                class="text-blue-600 hover:underline">編集</a>
 
                                 <form action="{{ route('artist.destroy', $artist->id) }}" method="POST" 
-                                      onsubmit="return confirm('本当に削除しますか？');">
+                                    onsubmit="return confirm('本当に削除しますか？');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:underline">削除</button>
                                 </form>
-
-                                <a href="{{ route('artist.gallery', $artist->id) }}" 
-                                   class="text-gray-600 hover:underline">ギャラリー</a>
                             </div>
                         </div>
                     </div>
                 @endforeach
             </div>
         @endif
+
 
     </div>
 </x-app-layout>

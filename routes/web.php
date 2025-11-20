@@ -32,11 +32,11 @@ Route::resource('artist', ArtistController::class)->middleware('auth');
 Route::get('artist/{artist}/gallery', [ArtistController::class, 'gallery'])->name('artist.gallery');
 
 // --- プロフィール管理 ---
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
 
 // --- 開発用リンク確認ページ ---
 Route::get('/dev-links', function () {
