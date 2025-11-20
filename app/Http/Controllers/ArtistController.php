@@ -14,7 +14,13 @@ class ArtistController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth')->except(['index', 'approvedList', 'home', 'gallery']);
+        $this->middleware('auth')->except([
+            //ログインなしでも見れるリスト
+            'index',
+            'approvedList',
+            'home',
+            'show',
+        ]);
     }
 
     public function create()
@@ -158,14 +164,29 @@ class ArtistController extends Controller
         return redirect()->route('dashboard')->with('success', 'アーティストを削除しました。');
     }
 
-    public function gallery(Artist $artist)
-    {
-        return view('artist.gallery', compact('artist'));
-    }
-
     public function home()
     {
         $artists = Artist::where('is_approved', true)->get();
         return view('home', compact('artists'));
     }
+
+    public function show(Artist $artist)
+    {
+        // 公開済みなら誰でも見れる
+        if ($artist->is_approved) {
+            return view('artist.show', compact('artist'));
+        }
+
+        // ↓未承認の場合のみ制御が必要↓
+        if (!auth()->check()) {
+            abort(403, 'このアーティストは非公開です');
+        }
+
+        if (auth()->id() !== $artist->user_id && auth()->user()->role !== 'admin') {
+            abort(403, '閲覧権限がありません');
+        }
+
+        return view('artist.show', compact('artist'));
+    }
+
 }

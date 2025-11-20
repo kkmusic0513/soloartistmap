@@ -22,21 +22,16 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/artists/{id}/approve', [AdminArtistController::class, 'approve'])->name('admin.artists.approve');
 });
 
-// --- アーティストリソースルート ---
-// Route::resource('artist', ArtistController::class)
-//     ->except(['show']) // galleryを代わりに使う
-//     ->middleware('auth');
-Route::resource('artist', ArtistController::class)->middleware('auth');
+// --- アーティストルート ---
+// show 以外を auth にする
+Route::resource('artist', ArtistController::class)
+    ->except(['show'])
+    ->middleware('auth');
 
-// ギャラリー表示は別メソッド
-Route::get('artist/{artist}/gallery', [ArtistController::class, 'gallery'])->name('artist.gallery');
+// show だけ公開
+Route::get('/artist/{artist}', [ArtistController::class, 'show'])
+    ->name('artist.show');
 
-// --- プロフィール管理 ---
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
 
 // --- 開発用リンク確認ページ ---
 Route::get('/dev-links', function () {

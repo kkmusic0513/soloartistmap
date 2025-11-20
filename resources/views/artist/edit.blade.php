@@ -91,7 +91,7 @@
                     class="w-full border rounded px-3 py-2">
             </div>
 
-            <button class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded shadow">
+            <button class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded shadow mt-4">
                 更新する
             </button>
         </form>
