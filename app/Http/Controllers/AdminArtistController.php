@@ -10,28 +10,31 @@ class AdminArtistController extends Controller
 {
     public function index(Request $request)
     {
+        $keyword = $request->input('keyword');
 
-        $keyword = $request->input('keyword', ''); // 空文字で初期化
+        // 未承認アーティスト
+        $queryPending = Artist::with('user')
+            ->where('is_approved', false);
 
-        // AdminArtistController.php
-        $artists = Artist::with('user') // ← これを追加
-            ->when($keyword, function ($query, $keyword) {
-                $query->where('name', 'like', "%{$keyword}%");
-            })
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        $query = \App\Models\Artist::query();
-
-        if (!empty($keyword)) {
-            $query->where('name', 'like', "%{$keyword}%");
+        if ($keyword) {
+            $queryPending->where('name', 'like', "%{$keyword}%");
         }
 
-        $pendingArtists = (clone $query)->where('is_approved', 0)->get();
-        $approvedArtists = (clone $query)->where('is_approved', 1)->get();
+        $pendingArtists = $queryPending->orderBy('id', 'desc')->paginate(20)->withQueryString();
+
+        // 承認済みアーティスト
+        $queryApproved = Artist::with('user')
+            ->where('is_approved', true);
+
+        if ($keyword) {
+            $queryApproved->where('name', 'like', "%{$keyword}%");
+        }
+
+        $approvedArtists = $queryApproved->orderBy('id', 'desc')->paginate(20)->withQueryString();
 
         return view('admin.artists', compact('pendingArtists', 'approvedArtists', 'keyword'));
     }
+
 
 
     public function approve($id)
