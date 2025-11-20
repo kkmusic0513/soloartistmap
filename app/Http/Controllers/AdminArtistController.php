@@ -10,7 +10,16 @@ class AdminArtistController extends Controller
 {
     public function index(Request $request)
     {
+
         $keyword = $request->input('keyword', ''); // 空文字で初期化
+
+        // AdminArtistController.php
+        $artists = Artist::with('user') // ← これを追加
+            ->when($keyword, function ($query, $keyword) {
+                $query->where('name', 'like', "%{$keyword}%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         $query = \App\Models\Artist::query();
 

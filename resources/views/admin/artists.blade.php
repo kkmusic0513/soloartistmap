@@ -53,6 +53,7 @@
                 <thead>
                     <tr class="bg-gray-100">
                         <th class="border p-2">ID</th>
+                        <th class="border p-2">ユーザー名</th>
                         <th class="border p-2">アーティスト名</th>
                         <th class="border p-2">メールアドレス</th>
                     </tr>
@@ -61,6 +62,7 @@
                     @foreach ($approvedArtists as $artist)
                         <tr>
                             <td class="border p-2">{{ $artist->id }}</td>
+                            <td class="border p-2">{{ $artist->user->name ?? '-' }}</td>
                             <td class="border p-2">{{ $artist->name }}</td>
                             <td class="border p-2">{{ $artist->user->email ?? '-' }}</td>
                         </tr>
