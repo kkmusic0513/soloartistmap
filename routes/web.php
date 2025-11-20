@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminArtistController;
 use App\Services\GmailService;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EventController;
 
 // --- TOPページ ---
 Route::get('/', [ArtistController::class, 'home'])->name('home');
@@ -31,6 +32,14 @@ Route::resource('artist', ArtistController::class)
 // show だけ公開
 Route::get('/artist/{artist}', [ArtistController::class, 'show'])
     ->name('artist.show');
+
+// アーティストに紐づくイベント管理（ログイン・権限あり）
+Route::middleware('auth')->group(function () {
+    Route::get('artist/{artist}/events', [EventController::class, 'index'])->name('events.index');
+    Route::get('artist/{artist}/events/create', [EventController::class, 'create'])->name('events.create');
+    Route::post('artist/{artist}/events', [EventController::class, 'store'])->name('events.store');
+    Route::delete('artist/{artist}/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+});
 
 
 // --- 開発用リンク確認ページ ---

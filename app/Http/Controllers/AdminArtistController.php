@@ -8,11 +8,22 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminArtistController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $artists = Artist::orderBy('created_at', 'desc')->get();
-        return view('admin.artists', compact('artists'));
+        $keyword = $request->input('keyword', ''); // 空文字で初期化
+
+        $query = \App\Models\Artist::query();
+
+        if (!empty($keyword)) {
+            $query->where('name', 'like', "%{$keyword}%");
+        }
+
+        $pendingArtists = (clone $query)->where('is_approved', 0)->get();
+        $approvedArtists = (clone $query)->where('is_approved', 1)->get();
+
+        return view('admin.artists', compact('pendingArtists', 'approvedArtists', 'keyword'));
     }
+
 
     public function approve($id)
     {

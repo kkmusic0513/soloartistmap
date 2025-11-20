@@ -81,6 +81,71 @@
             </div>
         </div>
 
+        {{-- イベント一覧 --}}
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold mb-4">ライブ・イベント一覧</h2>
+
+            @if ($artist->events->isEmpty())
+                <p class="text-gray-500">まだ登録されていません。</p>
+            @else
+                <div class="space-y-4">
+                    @foreach ($artist->events as $event)
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-semibold text-lg">{{ $event->title }}</h3>
+                                <span class="text-gray-500 text-sm">
+                                    {{ $event->start_at->format('Y/m/d H:i') }}
+                                    @if($event->end_at)
+                                        ～ {{ $event->end_at->format('H:i') }}
+                                    @endif
+                                </span>
+                            </div>
+
+                            @if ($event->photo)
+                                <div class="my-2">
+                                    <a href="{{ asset('storage/' . $event->photo) }}" class="glightbox">
+                                        <img src="{{ asset('storage/' . $event->photo) }}" class="w-full h-48 object-cover rounded-lg shadow cursor-pointer">
+                                    </a>
+                                </div>
+                            @endif
+
+                            @if ($event->location)
+                                <p><strong>場所：</strong>{{ $event->location }}</p>
+                            @endif
+
+                            @if ($event->description)
+                                <p>{!! nl2br(e($event->description)) !!}</p>
+                            @endif
+
+                            @auth
+                                @if (auth()->id() === $artist->user_id || auth()->user()->role === 'admin')
+                                    <div class="mt-2 flex gap-2">
+                                        <a href="{{ route('events.edit', [$artist, $event]) }}" class="text-blue-600 hover:underline">編集</a>
+                                        <form action="{{ route('events.destroy', [$artist, $event]) }}" method="POST" onsubmit="return confirm('本当に削除しますか？');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:underline">削除</button>
+                                        </form>
+                                    </div>
+                                @endif
+                            @endauth
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
+            @auth
+                @if (auth()->id() === $artist->user_id || auth()->user()->role === 'admin')
+                    <div class="mt-4">
+                        <a href="{{ route('events.create', $artist) }}" class="px-4 py-2 bg-green-600 text-white rounded">
+                            新しいイベントを追加
+                        </a>
+                    </div>
+                @endif
+            @endauth
+        </div>
+
+
         {{-- 編集 / 削除 --}}
         @auth
             @if (auth()->id() === $artist->user_id || auth()->user()->role === 'admin')

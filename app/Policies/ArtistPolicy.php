@@ -37,7 +37,8 @@ class ArtistPolicy
      */
     public function update(User $user, Artist $artist): bool
     {
-        return $user->id === $artist->user_id;
+        // return $user->id === $artist->user_id;
+        return $user->id === $artist->user_id || $user->role === 'admin';
     }
 
     /**

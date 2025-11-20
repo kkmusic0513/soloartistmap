@@ -4,6 +4,10 @@
 
         @auth
         <div class="bg-white shadow-lg rounded-lg p-6">
+            <a href="{{ route('dashboard') }}"
+            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded shadow">
+            ← ダッシュボードに戻る
+            </a>
             <h1 class="text-2xl font-bold mb-4 text-center">アーティスト登録フォーム</h1>
 
             <form action="{{ route('artist.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">

@@ -88,6 +88,8 @@
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:underline">削除</button>
                                         </form>
+
+                                        <a href="{{ route('events.index', $artist) }}" class="text-green-600 hover:underline">イベントを登録</a>
                                     </div>
                                 @endif
                             @endauth
