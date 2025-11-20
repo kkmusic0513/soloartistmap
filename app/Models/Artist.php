@@ -18,6 +18,7 @@ class Artist extends Model
         'prefecture',
         'genre',
         'profile',
+        'official_website',
         'youtube_link',
         'soundcloud_link',
         'twitter_link',

@@ -64,6 +64,13 @@
             <x-input-label value="プロフィール" />
             <textarea name="profile" class="w-full mb-4">{{ old('profile', $artist->profile) }}</textarea>
 
+            <div>
+                <label class="block font-medium mb-1">公式WEBサイト</label>
+                <input type="url" name="official_website" 
+                    value="{{ old('official_website', $artist->official_website) }}"
+                    class="w-full border rounded px-3 py-2">
+            </div>
+
             {{-- SNS --}}
             <div>
                 <label class="block font-medium mb-1">YouTubeリンク</label>

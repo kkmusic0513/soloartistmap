@@ -14,8 +14,8 @@
                             // main_photo と sub_photo_1, sub_photo_2 を配列にまとめて表示
                             $photos = array_filter([
                                 $artist->main_photo,
-                                $artist->sub_photo_1,
-                                $artist->sub_photo_2,
+                                // $artist->sub_photo_1,
+                                // $artist->sub_photo_2,
                             ]);
                         @endphp
 
@@ -32,30 +32,33 @@
                         {{-- カード本体 --}}
                         <div class="p-4">
                             <h3 class="font-bold text-lg mb-2">{{ $artist->name }}</h3>
+                            @auth
+                                {{-- ステータス --}}
+                                <span class="
+                                    inline-block px-2 py-1 text-xs rounded 
+                                    @if($artist->is_approved === 1) bg-green-100 text-green-700
+                                    @elseif($artist->is_approved === 0) bg-yellow-100 text-yellow-700
+                                    @else bg-gray-200 text-gray-700
+                                    @endif
+                                ">
+                                    {{ $artist->is_approved === 1 ? '公開中' : ($artist->is_approved === 0 ? '承認待ち' : '非公開') }}
+                                </span>
 
-                            {{-- ステータス --}}
-                            <span class="
-                                inline-block px-2 py-1 text-xs rounded 
-                                @if($artist->is_approved === 1) bg-green-100 text-green-700
-                                @elseif($artist->is_approved === 0) bg-yellow-100 text-yellow-700
-                                @else bg-gray-200 text-gray-700
+                                {{-- 操作ボタン（本人 or 管理者のみ表示） --}}
+                                @if (auth()->id() === $artist->user_id || auth()->user()->role === 'admin')
+                                    <div class="mt-4 flex gap-2">
+                                        <a href="{{ route('artist.edit', $artist->id) }}"
+                                        class="text-blue-600 hover:underline">編集</a>
+
+                                        <form action="{{ route('artist.destroy', $artist->id) }}" method="POST" 
+                                            onsubmit="return confirm('本当に削除しますか？');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:underline">削除</button>
+                                        </form>
+                                    </div>
                                 @endif
-                            ">
-                                {{ $artist->is_approved === 1 ? '公開中' : ($artist->is_approved === 0 ? '承認待ち' : '非公開') }}
-                            </span>
-
-                            {{-- 操作ボタン --}}
-                            <div class="mt-4 flex gap-2">
-                                <a href="{{ route('artist.edit', $artist->id) }}"
-                                class="text-blue-600 hover:underline">編集</a>
-
-                                <form action="{{ route('artist.destroy', $artist->id) }}" method="POST" 
-                                    onsubmit="return confirm('本当に削除しますか？');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:underline">削除</button>
-                                </form>
-                            </div>
+                            @endauth
                         </div>
                     </div>
                 @endforeach
