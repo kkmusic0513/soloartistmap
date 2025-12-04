@@ -22,6 +22,26 @@
             </div>
         </div>
 
+        {{-- DM一覧 --}}
+        @php
+            $unreadTotal = \App\Models\DmMessage::where('to_user_id', auth()->id())
+                ->where('is_read', false)
+                ->count();
+        @endphp
+
+        <a href="{{ route('dm.index') }}" 
+        class="relative inline-flex items-center bg-white p-4 mb-6 rounded-lg shadow hover:bg-gray-50 w-full">
+            <span class="font-semibold text-lg">DM一覧</span>
+
+            @if($unreadTotal > 0)
+                <span class="absolute right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                    {{ $unreadTotal }}
+                </span>
+            @endif
+        </a>
+
+
+
         {{-- 新規追加ボタン --}}
         <div class="mb-6">
             <a href="{{ route('artist.create') }}"
@@ -90,6 +110,30 @@
                                         </form>
 
                                         <a href="{{ route('events.index', $artist) }}" class="text-green-600 hover:underline">イベントを登録</a>
+
+                                        {{-- 🔥 DMボタン（相手: アーティスト作者） --}}
+                                        @if (auth()->id() != $artist->user_id)
+                                            <a href="{{ route('dm.show', $artist->user_id) }}"
+                                                class="relative text-pink-600 hover:underline">
+
+                                                DM
+
+                                                {{-- 未読がある場合のみ表示 --}}
+                                                @php
+                                                    $unread = \App\Models\DmMessage::where('from_user_id', $artist->user_id)
+                                                        ->where('to_user_id', auth()->id())
+                                                        ->where('is_read', false)
+                                                        ->count();
+                                                @endphp
+
+                                                @if ($unread > 0)
+                                                    <span class="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-1 rounded-full">
+                                                        {{ $unread }}
+                                                    </span>
+                                                @endif
+                                            </a>
+                                        @endif
+
                                     </div>
                                 @endif
                             @endauth
@@ -100,6 +144,6 @@
             </div>
         @endif
 
-
     </div>
+
 </x-app-layout>

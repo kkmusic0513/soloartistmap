@@ -50,4 +50,15 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function artist()
+    {
+        return $this->hasOne(Artist::class);
+    }
+    public function artists()
+    {
+        return $this->hasMany(\App\Models\Artist::class);
+    }
+
+
 }

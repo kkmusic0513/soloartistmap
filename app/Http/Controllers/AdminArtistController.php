@@ -35,8 +35,6 @@ class AdminArtistController extends Controller
         return view('admin.artists', compact('pendingArtists', 'approvedArtists', 'keyword'));
     }
 
-
-
     public function approve($id)
     {
         $artist = Artist::findOrFail($id);

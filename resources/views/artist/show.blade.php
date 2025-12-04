@@ -149,7 +149,7 @@
         {{-- 編集 / 削除 --}}
         @auth
             @if (auth()->id() === $artist->user_id || auth()->user()->role === 'admin')
-                <div class="mt-6 flex gap-4">
+                <div class="mt-6 mb-6 flex gap-4">
                     <a href="{{ route('artist.edit', $artist->id) }}"
                        class="px-4 py-2 bg-blue-600 text-white rounded">編集</a>
 
@@ -160,6 +160,30 @@
                         <button class="px-4 py-2 bg-red-600 text-white rounded">削除</button>
                     </form>
                 </div>
+            @endif
+        @endauth
+
+        {{-- DM機能 --}}
+        @auth
+            @if(auth()->id() != $artist->user_id)
+                @php
+                    $unread = \App\Models\DmMessage::where('from_user_id', $artist->user_id)
+                        ->where('to_user_id', auth()->id())
+                        ->where('is_read', false)
+                        ->count();
+                @endphp
+
+                <a href="{{ route('dm.show', $artist->user_id) }}"
+                    class="relative inline-block bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded shadow">
+
+                    このアーティストにDMを送る
+
+                    @if($unread > 0)
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                            {{ $unread }}
+                        </span>
+                    @endif
+                </a>
             @endif
         @endauth
 
