@@ -14,6 +14,7 @@ class DmMessage extends Model
         'from_artist_id',
         'to_artist_id',
         'message',
+        'image_path', // ← 追加
         'is_read',
     ];
 

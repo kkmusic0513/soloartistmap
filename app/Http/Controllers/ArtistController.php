@@ -23,6 +23,40 @@ class ArtistController extends Controller
         ]);
     }
 
+    public function home(Request $request)
+    {
+        $prefecture = $request->query('prefecture');
+        $genre = $request->query('genre');
+
+        $query = Artist::where('is_approved', true);
+
+        // 都道府県で絞り込み（指定があれば）
+        if (!empty($prefecture)) {
+            $query->where('prefecture', $prefecture);
+        }
+
+        // ジャンルで絞り込み（指定があれば）
+        if (!empty($genre)) {
+            $query->where('genre', $genre);
+        }
+
+        // 並びは新着順（必要なら変更）
+        $artists = $query->orderBy('created_at', 'desc')->paginate(20)->withQueryString();
+
+        //新着アーティスト用(12アーティスト)
+        $latestArtists = Artist::latest()->take(12)->get();
+
+
+        return view('home', [
+            'artists' => $artists,
+            'latestArtists' => $latestArtists,
+            'prefectures' => config('prefectures'),
+            'genres' => config('genres'),
+            'selected_prefecture' => $prefecture,
+            'selected_genre' => $genre,
+        ]);
+    }
+
     public function create()
     {
         return view('artist.create');
@@ -61,12 +95,6 @@ class ArtistController extends Controller
         return redirect()->route('artist.create')->with('success', '登録が完了しました！');
     }
 
-
-    public function index()
-    {
-        $artists = Artist::where('is_approved', true)->get();
-        return view('artist.index', compact('artists'));
-    }
 
     public function approvedList()
     {
@@ -162,12 +190,6 @@ class ArtistController extends Controller
         $this->authorize('delete', $artist);
         $artist->delete();
         return redirect()->route('dashboard')->with('success', 'アーティストを削除しました。');
-    }
-
-    public function home()
-    {
-        $artists = Artist::where('is_approved', true)->get();
-        return view('home', compact('artists'));
     }
 
     public function show(Artist $artist)

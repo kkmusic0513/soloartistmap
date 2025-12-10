@@ -32,10 +32,8 @@
     </div>
 
     {{-- ★★★ メッセージ送信フォーム ★★★ --}}
-    <form action="{{ route('dm.send', $user->id) }}" method="POST" class="mt-2">
+    {{-- <form action="{{ route('dm.send', $user->id) }}" method="POST" class="mt-2">
         @csrf
-
-        {{-- 送信元アーティスト選択 --}}
         <select name="artist_id" class="border rounded px-3 py-2 mb-3 w-full">
             <option value="">（あなたのアーティストを選択しない — ユーザー名で送信）</option>
             @foreach($myArtists as $artist)
@@ -55,7 +53,34 @@
                 送信
             </button>
         </div>
+    </form> --}}
+
+    <form action="{{ route('dm.send', $user->id) }}" method="POST" enctype="multipart/form-data" class="mt-2">
+        @csrf
+        {{-- 送信元アーティスト選択 --}}
+        <select name="artist_id" class="border rounded px-3 py-2 mb-2 w-full">
+            <option value="">（あなたのアーティストを選択しない — ユーザー名で送信）</option>
+            @foreach($myArtists as $artist)
+                <option value="{{ $artist->id }}"
+                    {{ (!empty($fromArtist) && $fromArtist->id == $artist->id) ? 'selected' : '' }}>
+                    {{ $artist->name }}
+                </option>
+            @endforeach
+        </select>
+
+        {{-- 画像アップロード --}}
+        <div class="mb-3">
+            <input type="file" name="image" accept="image/*" class="block w-full" />
+            <p class="text-xs text-gray-500 mt-1">画像は JPG/PNG/GIF/WEBP、最大 5MB</p>
+        </div>
+
+        {{-- メッセージ入力 --}}
+        <div class="flex gap-2">
+            <input type="text" name="message" class="flex-1 border rounded px-3 py-2" placeholder="メッセージを入力">
+            <button class="bg-pink-500 text-white px-4 py-2 rounded">送信</button>
+        </div>
     </form>
+
 
     {{-- 自動スクロール --}}
     <script>

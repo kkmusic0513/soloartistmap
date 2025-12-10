@@ -59,6 +59,10 @@ return [
             'throw' => false,
             'report' => false,
         ],
+            'seeders' => [
+            'driver' => 'local',
+            'root'   => database_path('seeders'), // ← ここに dummy_images フォルダを置く
+        ],
 
     ],
 
@@ -76,5 +80,8 @@ return [
     'links' => [
         public_path('storage') => storage_path('app/public'),
     ],
+
+    
+
 
 ];

@@ -9,6 +9,7 @@ use App\Models\Artist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Image;
 
 class DmController extends Controller
 {
@@ -115,26 +116,23 @@ class DmController extends Controller
     public function send(Request $request, User $user)
     {
         $request->validate([
-            'message' => 'required|string|max:2000',
-            // フォーム側が name="artist_id" の場合と、以前の name="from_artist_id" の両方を許容する
+            'message' => 'nullable|string|max:2000',
             'artist_id'      => 'nullable|integer|exists:artists,id',
             'from_artist_id' => 'nullable|integer|exists:artists,id',
             'to_artist_id'   => 'nullable|integer|exists:artists,id',
+            'image' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,webp|max:5120', // 5MB max
         ]);
 
         $me = Auth::id();
         $otherId = $user->id;
 
-        // スレッドを取得または作成（user ID を正規化して一意にする）
         $thread = DmThread::firstOrCreate([
             'user1_id' => min($me, $otherId),
             'user2_id' => max($me, $otherId),
         ]);
 
-        // --- 送信者アーティストID の取得（フォーム側の name が artist_id か from_artist_id かの差異を吸収）
+        // 送信者アーティストID の取得と検証
         $fromArtistId = $request->input('artist_id', $request->input('from_artist_id'));
-
-        // 所有チェック：fromArtistId が自分のアーティストでなければ無効化（セキュリティ）
         if ($fromArtistId) {
             $ownerId = Artist::where('id', $fromArtistId)->value('user_id');
             if ($ownerId != $me) {
@@ -142,7 +140,7 @@ class DmController extends Controller
             }
         }
 
-        // --- 宛先アーティストID の取得・検証
+        // 宛先アーティスト検証
         $toArtistId = $request->input('to_artist_id');
         if ($toArtistId) {
             $ownerId = Artist::where('id', $toArtistId)->value('user_id');
@@ -151,16 +149,45 @@ class DmController extends Controller
             }
         }
 
-        // --- 送信テキスト整形（不要な空白を削る）
-        $messageText = trim($request->input('message'));
+        // 画像処理
+        $imagePath = null;
 
-        // 最低限の安全性チェック
-        if ($messageText === '') {
-            return back()->withErrors(['message' => 'メッセージが空です。']);
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+
+            // 保存ファイル名
+            $filename = time() . '_' . uniqid() . '.jpg';
+
+            // Intervention Image（2.x）で 1200px にリサイズして JPEG 保存
+            $img = Image::make($file->getRealPath())
+                ->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->encode('jpg', 80);
+
+            // 保存先（storage/app/public/dm_images/...）
+            $savePath = storage_path('app/public/dm_images/' . $filename);
+
+            if (!file_exists(dirname($savePath))) {
+                mkdir(dirname($savePath), 0755, true);
+            }
+
+            $img->save($savePath);
+
+            // DB 用パス（public/storage/dm_images/... にリンクされる）
+            $imagePath = 'dm_images/' . $filename;
         }
 
-        // 保存処理（トランザクション）
-        DB::transaction(function () use ($thread, $me, $otherId, $fromArtistId, $toArtistId, $messageText) {
+        $messageText = trim((string) $request->input('message', ''));
+
+        // 空チェック：message と image の両方が空ならエラー
+        if ($messageText === '' && !$imagePath) {
+            return back()->withErrors(['message' => 'メッセージまたは画像を入力してください。']);
+        }
+
+        // 保存（トランザクション）
+        DB::transaction(function () use ($thread, $me, $otherId, $fromArtistId, $toArtistId, $messageText, $imagePath) {
             DmMessage::create([
                 'thread_id'       => $thread->id,
                 'from_user_id'    => $me,
@@ -168,21 +195,21 @@ class DmController extends Controller
                 'from_artist_id'  => $fromArtistId,
                 'to_artist_id'    => $toArtistId,
                 'message'         => $messageText,
+                'image_path'      => $imagePath,
                 'is_read'         => false,
             ]);
         });
 
-        // リダイレクトに付けるクエリ名は show() が参照している from_artist_id / to_artist_id に合わせる
         $params = [];
         if ($fromArtistId) $params['from_artist_id'] = $fromArtistId;
         if ($toArtistId)   $params['to_artist_id']   = $toArtistId;
 
-        // UX: メッセージ欄にフォーカス / 最新までスクロールのために #dm-messages にアンカーを付ける
-        // ※ Blade 側でアンカーを読み取る（location.hash）実装があれば有効
+        // アンカー付きでリダイレクト（最新までスクロール）
         $route = route('dm.show', array_merge([$user->id], $params)) . '#dm-messages';
 
         return redirect($route);
     }
+
 
     public function messages(User $user)
     {
