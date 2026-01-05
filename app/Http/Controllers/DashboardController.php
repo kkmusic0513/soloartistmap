@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Artist;
 use App\Models\DmMessage;
+use App\Models\ArtistVideo;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller

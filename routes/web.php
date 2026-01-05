@@ -9,6 +9,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\DmController;
+use App\Http\Controllers\ArtistVideoController;
+
 
 
 // --- TOPページ ---
@@ -42,6 +44,10 @@ Route::middleware('auth')->group(function () {
     Route::post('artist/{artist}/events', [EventController::class, 'store'])->name('events.store');
     Route::delete('artist/{artist}/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 });
+// アーティストに紐づく動画管理
+Route::resource('artists.videos', ArtistVideoController::class)
+    ->middleware('auth');
+
 
 // DM機能
 Route::middleware(['auth'])->group(function () {

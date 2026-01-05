@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Artist;
+use App\Models\ArtistVideo;
+use App\Models\User;
 use App\Mail\ArtistApprovedMail;
 use Image;
 
@@ -46,10 +48,16 @@ class ArtistController extends Controller
         //新着アーティスト用(12アーティスト)
         $latestArtists = Artist::latest()->take(12)->get();
 
+        //新着動画(10個)
+        $latestVideos = ArtistVideo::with('artist')
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
 
         return view('home', [
             'artists' => $artists,
             'latestArtists' => $latestArtists,
+            'latestVideos' => $latestVideos,
             'prefectures' => config('prefectures'),
             'genres' => config('genres'),
             'selected_prefecture' => $prefecture,

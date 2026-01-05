@@ -59,7 +59,7 @@ return [
             'throw' => false,
             'report' => false,
         ],
-            'seeders' => [
+        'seeders' => [
             'driver' => 'local',
             'root'   => database_path('seeders'), // ← ここに dummy_images フォルダを置く
         ],

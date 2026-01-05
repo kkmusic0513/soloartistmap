@@ -111,6 +111,12 @@
 
                                         <a href="{{ route('events.index', $artist) }}" class="text-green-600 hover:underline">イベントを登録</a>
 
+                                        <a href="{{ route('artists.videos.create', $artist) }}"  class="text-red-500 hover:underline">YouTube動画を登録</a>
+
+                                        <a href="{{ route('artists.videos.index', $artist) }}" class="text-purple-600 hover:underline">動画管理</a>
+
+
+
                                         {{-- 🔥 DMボタン（相手: アーティスト作者） --}}
                                         @if (auth()->id() != $artist->user_id)
                                             <a href="{{ route('dm.show', $artist->user_id) }}"

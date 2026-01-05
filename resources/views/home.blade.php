@@ -137,6 +137,28 @@
         }
         </script>
 
+        <h2 class="text-xl font-bold mb-4">最新動画</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            @foreach($latestVideos as $video)
+                <div class="bg-white shadow rounded p-2">
+
+                    <iframe class="w-full aspect-video"
+                        src="{{ $video->youtube_url }}"
+                        title="{{ $video->title }}"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+
+                    <p class="font-semibold mt-2">{{ $video->artist->name }}</p>
+                    @if($video->title)
+                        <p class="text-sm text-gray-600">{{ $video->title }}</p>
+                    @endif
+
+                </div>
+            @endforeach
+        </div>
 
 
 

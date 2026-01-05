@@ -44,4 +44,9 @@ class Artist extends Model
     {
         return $this->hasMany(Event::class);
     }
+    public function videos()
+    {
+        return $this->hasMany(ArtistVideo::class);
+    }
+
 }
