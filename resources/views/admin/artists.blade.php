@@ -20,6 +20,10 @@
                     <tr class="bg-gray-100">
                         <th class="border p-2">ID</th>
                         <th class="border p-2">アーティスト名</th>
+                        <th class="border p-2">活動地域</th>
+                        <th class="border p-2">ジャンル</th>
+                        <th class="border p-2">プロフィール</th>
+                        <th class="border p-2">公式WEB</th>
                         <th class="border p-2">メールアドレス</th>
                         <th class="border p-2">操作</th>
                     </tr>
@@ -29,6 +33,16 @@
                         <tr>
                             <td class="border p-2">{{ $artist->id }}</td>
                             <td class="border p-2">{{ $artist->name }}</td>
+                            <td class="border p-2">{{ $artist->prefecture ?? '-' }}</td>
+                            <td class="border p-2">{{ $artist->genre ?? '-' }}</td>
+                            <td class="border p-2 text-sm">{{ $artist->profile ? Str::limit($artist->profile, 50) : '-' }}</td>
+                            <td class="border p-2">
+                                @if($artist->official_website)
+                                    <a href="{{ $artist->official_website }}" target="_blank" class="text-blue-600 hover:underline text-sm">リンク</a>
+                                @else
+                                    -
+                                @endif
+                            </td>
                             <td class="border p-2">{{ $artist->user->email ?? '-' }}</td>
                             <td class="border p-2">
                                 <form action="{{ route('admin.artists.approve', $artist->id) }}" method="POST">
@@ -55,6 +69,10 @@
                         <th class="border p-2">ID</th>
                         <th class="border p-2">ユーザー名</th>
                         <th class="border p-2">アーティスト名</th>
+                        <th class="border p-2">活動地域</th>
+                        <th class="border p-2">ジャンル</th>
+                        <th class="border p-2">プロフィール</th>
+                        <th class="border p-2">公式WEB</th>
                         <th class="border p-2">メールアドレス</th>
                         <th class="border p-2">操作</th>
                     </tr>
@@ -65,6 +83,16 @@
                             <td class="border p-2">{{ $artist->id }}</td>
                             <td class="border p-2">{{ $artist->user->name ?? '-' }}</td>
                             <td class="border p-2">{{ $artist->name }}</td>
+                            <td class="border p-2">{{ $artist->prefecture ?? '-' }}</td>
+                            <td class="border p-2">{{ $artist->genre ?? '-' }}</td>
+                            <td class="border p-2 text-sm">{{ $artist->profile ? Str::limit($artist->profile, 50) : '-' }}</td>
+                            <td class="border p-2">
+                                @if($artist->official_website)
+                                    <a href="{{ $artist->official_website }}" target="_blank" class="text-blue-600 hover:underline text-sm">リンク</a>
+                                @else
+                                    -
+                                @endif
+                            </td>
                             <td class="border p-2">{{ $artist->user->email ?? '-' }}</td>
                             <td class="border p-2">
                                 <form action="{{ route('admin.artists.disapprove', $artist->id) }}" method="POST"
