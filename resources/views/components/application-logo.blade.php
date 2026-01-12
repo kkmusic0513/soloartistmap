@@ -3,6 +3,6 @@
 </svg> -->
 <div class="text-center">
     <h1 class="text-3xl font-bold text-pink-500">
-        {{ config('app.name', 'SoloArtistMap') }}
+        {{ config('app.name', '全国ソロアーティストマップ') }}
     </h1>
 </div>

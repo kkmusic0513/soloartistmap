@@ -22,6 +22,7 @@ class Artist extends Model
         'youtube_link',
         'soundcloud_link',
         'twitter_link',
+        'is_public',
     ];
 
     // protected $casts = [

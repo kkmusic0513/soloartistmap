@@ -145,6 +145,62 @@
             @endauth
         </div>
 
+        {{-- 動画一覧 --}}
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold mb-4">動画一覧</h2>
+
+            @if ($videos->isEmpty())
+                <p class="text-gray-500">まだ登録されていません。</p>
+            @else
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach ($videos as $video)
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <div class="aspect-video mb-4">
+                                <iframe
+                                    src="{{ $video->youtube_url }}"
+                                    class="w-full h-full rounded"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
+
+                            @if ($video->title)
+                                <h3 class="font-semibold text-lg mb-2">{{ $video->title }}</h3>
+                            @endif
+
+                            <div class="text-sm text-gray-500">
+                                登録日: {{ $video->created_at->format('Y/m/d') }}
+                            </div>
+
+                            @auth
+                                @if (auth()->id() === $artist->user_id || auth()->user()->role === 'admin')
+                                    <div class="mt-3 flex gap-2">
+                                        <a href="{{ route('artists.videos.edit', [$artist, $video]) }}" class="text-blue-600 hover:underline text-sm">編集</a>
+                                        <form action="{{ route('artists.videos.destroy', [$artist, $video]) }}" method="POST" onsubmit="return confirm('本当に削除しますか？');" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:underline text-sm">削除</button>
+                                        </form>
+                                    </div>
+                                @endif
+                            @endauth
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
+            @auth
+                @if (auth()->id() === $artist->user_id || auth()->user()->role === 'admin')
+                    <div class="mt-4">
+                        <a href="{{ route('artists.videos.create', $artist) }}" class="px-4 py-2 bg-green-600 text-white rounded">
+                            新しい動画を追加
+                        </a>
+                    </div>
+                @endif
+            @endauth
+        </div>
+
 
         {{-- 編集 / 削除 --}}
         @auth

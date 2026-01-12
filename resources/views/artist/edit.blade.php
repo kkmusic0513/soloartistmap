@@ -86,9 +86,23 @@
             </div>
             <div>
                 <label class="block font-medium mb-1">X(Twitter)リンク</label>
-                <input type="url" name="twitter_link" 
+                <input type="url" name="twitter_link"
                     value="{{ old('twitter_link', $artist->twitter_link) }}"
                     class="w-full border rounded px-3 py-2">
+            </div>
+
+            {{-- 公開設定 --}}
+            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                <label class="flex items-center">
+                    <input type="checkbox" name="is_public" value="1"
+                        {{ old('is_public', $artist->is_public) ? 'checked' : '' }}
+                        class="mr-3 h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded">
+                    <span class="font-medium text-gray-900">このアーティストを公開する</span>
+                </label>
+                <p class="text-sm text-gray-600 mt-2">
+                    チェックを入れるとホームページで検索・閲覧できるようになります。
+                    チェックを外すと自分のダッシュボードでのみ管理できます。
+                </p>
             </div>
 
             <button class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded shadow mt-4">

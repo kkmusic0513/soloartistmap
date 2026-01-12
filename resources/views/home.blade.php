@@ -16,19 +16,19 @@
                 @touchend="endTouch()"
             >
                 @foreach($latestArtists as $artist)
-                    <div 
+                    <div
                         class="px-2 flex-shrink-0"
                         :style="`width: ${itemWidth}px`"
                     >
-                        <div class="border rounded p-2 bg-white shadow">
+                        <a href="{{ route('artist.show', $artist) }}" class="block border rounded p-2 bg-white shadow hover:shadow-lg transition-shadow">
                             @if($artist->main_photo)
-                                <img 
+                                <img
                                     src="{{ asset('storage/'.$artist->main_photo) }}"
                                     class="w-full h-40 object-cover rounded"
                                 >
                             @endif
                             <p class="font-semibold mt-2">{{ $artist->name }}</p>
-                        </div>
+                        </a>
                     </div>
                 @endforeach
             </div>
@@ -137,7 +137,12 @@
         }
         </script>
 
-        <h2 class="text-xl font-bold mb-4">最新動画</h2>
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">最新動画</h2>
+            <a href="{{ route('videos.index') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                もっと見る →
+            </a>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             @foreach($latestVideos as $video)
@@ -159,6 +164,147 @@
                 </div>
             @endforeach
         </div>
+
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">最新イベント（開催日順）</h2>
+            <a href="{{ route('events.index') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                もっと見る →
+            </a>
+        </div>
+
+        @if($upcomingEvents->isEmpty())
+            <p class="text-gray-500 mb-6">現在、開催予定のイベントはありません。</p>
+        @else
+            <div
+                x-data="carousel({ total: {{ $upcomingEvents->count() }} })"
+                class="top-slide relative mb-6"
+            >
+                {{-- スライド全体 --}}
+                <div
+                    class="flex transition-transform duration-500"
+                    :style="`transform: translateX(-${currentTranslate}px);`"
+                    @touchstart="startTouch($event)"
+                    @touchmove="moveTouch($event)"
+                    @touchend="endTouch()"
+                >
+                    @foreach($upcomingEvents as $event)
+                        <div
+                            class="px-2 flex-shrink-0"
+                            :style="`width: ${itemWidth}px`"
+                        >
+                            <div class="border rounded p-4 bg-white shadow hover:shadow-lg transition-shadow">
+                                @if($event->photo)
+                                    <img src="{{ asset('storage/' . $event->photo) }}" class="w-full h-32 object-cover rounded mb-2">
+                                @endif
+                                <h3 class="font-semibold text-lg mb-1">{{ $event->title }}</h3>
+                                <p class="font-medium text-blue-600 mb-1">{{ $event->artist->name }}</p>
+                                <p class="text-sm text-gray-600 mb-1">
+                                    📅 {{ $event->start_at->format('Y/m/d H:i') }}
+                                    @if($event->end_at)
+                                        ～ {{ $event->end_at->format('H:i') }}
+                                    @endif
+                                </p>
+                                @if($event->location)
+                                    <p class="text-sm text-gray-600 mb-1">📍 {{ $event->location }}</p>
+                                @endif
+                                @if($event->description)
+                                    <p class="text-sm text-gray-700">{{ Str::limit($event->description, 80) }}</p>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                {{-- 左右ナビ --}}
+                <button
+                    @click="prev()"
+                    class="absolute left-0 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-2 hidden md:block"
+                >‹</button>
+
+                <button
+                    @click="next()"
+                    class="absolute right-0 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-2 hidden md:block"
+                >›</button>
+
+                {{-- インジケータ --}}
+                <div class="flex justify-center mt-2 space-x-2">
+                    <template x-for="i in total">
+                        <div
+                            class="w-3 h-3 rounded-full transition"
+                            :class="currentIndex === (i - 1) ? 'bg-blue-600' : 'bg-gray-300'"
+                        ></div>
+                    </template>
+                </div>
+            </div>
+        @endif
+
+        <h2 class="text-xl font-bold mb-4">最新イベント（登録日順）</h2>
+
+        @if($recentEvents->isEmpty())
+            <p class="text-gray-500 mb-6">現在、登録されているイベントはありません。</p>
+        @else
+            <div
+                x-data="carousel({ total: {{ $recentEvents->count() }} })"
+                class="top-slide relative mb-6"
+            >
+                {{-- スライド全体 --}}
+                <div
+                    class="flex transition-transform duration-500"
+                    :style="`transform: translateX(-${currentTranslate}px);`"
+                    @touchstart="startTouch($event)"
+                    @touchmove="moveTouch($event)"
+                    @touchend="endTouch()"
+                >
+                    @foreach($recentEvents as $event)
+                        <div
+                            class="px-2 flex-shrink-0"
+                            :style="`width: ${itemWidth}px`"
+                        >
+                            <div class="border rounded p-4 bg-white shadow hover:shadow-lg transition-shadow">
+                                @if($event->photo)
+                                    <img src="{{ asset('storage/' . $event->photo) }}" class="w-full h-32 object-cover rounded mb-2">
+                                @endif
+                                <h3 class="font-semibold text-lg mb-1">{{ $event->title }}</h3>
+                                <p class="font-medium text-green-600 mb-1">{{ $event->artist->name }}</p>
+                                <p class="text-sm text-gray-600 mb-1">
+                                    📅 {{ $event->start_at->format('Y/m/d H:i') }}
+                                    @if($event->end_at)
+                                        ～ {{ $event->end_at->format('H:i') }}
+                                    @endif
+                                </p>
+                                @if($event->location)
+                                    <p class="text-sm text-gray-600 mb-1">📍 {{ $event->location }}</p>
+                                @endif
+                                @if($event->description)
+                                    <p class="text-sm text-gray-700">{{ Str::limit($event->description, 80) }}</p>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                {{-- 左右ナビ --}}
+                <button
+                    @click="prev()"
+                    class="absolute left-0 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-2 hidden md:block"
+                >‹</button>
+
+                <button
+                    @click="next()"
+                    class="absolute right-0 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-2 hidden md:block"
+                >›</button>
+
+                {{-- インジケータ --}}
+                <div class="flex justify-center mt-2 space-x-2">
+                    <template x-for="i in total">
+                        <div
+                            class="w-3 h-3 rounded-full transition"
+                            :class="currentIndex === (i - 1) ? 'bg-blue-600' : 'bg-gray-300'"
+                        ></div>
+                    </template>
+                </div>
+            </div>
+        @endif
 
 
 

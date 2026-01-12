@@ -55,11 +55,6 @@
     </section>
 
     <section>
-        <h2>📧 Google連携</h2>
-        <a href="/google/auth">Google認証開始</a>
-    </section>
-
-    <section>
         <h2>⚙️ システム</h2>
         <a href="{{ route('dev.links') }}">このページ（/dev-links）</a>
     </section>

@@ -3,9 +3,12 @@
         <div class="flex flex-col sm:flex-row sm:justify-between sm:h-12 items-center">
 
             <!-- サイトタイトル -->
-            <div class="flex justify-center sm:justify-start mt-2 mb-2 sm:mb-0 lg:mb-4">
-                <a href="{{ route('home') }}" class="text-xl font-bold text-gray-800">
+            <div class="flex flex-col sm:flex-row justify-center sm:justify-start mt-2 mb-2 sm:mb-0 lg:mb-4 items-center sm:items-start">
+                <a href="{{ route('home') }}" class="text-xl font-bold text-gray-800 mb-2 sm:mb-0">
                     {{ config('app.name', 'SoloArtistMap') }}
+                </a>
+                <a href="{{ route('help') }}" class="bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold px-3 py-1 rounded shadow whitespace-nowrap sm:ml-6">
+                    使い方ガイド
                 </a>
             </div>
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Artist;
 use App\Models\ArtistVideo;
+use App\Models\Event;
 use App\Models\User;
 use App\Mail\ArtistApprovedMail;
 use Image;
@@ -30,7 +31,7 @@ class ArtistController extends Controller
         $prefecture = $request->query('prefecture');
         $genre = $request->query('genre');
 
-        $query = Artist::where('is_approved', true);
+        $query = Artist::where('is_approved', true)->where('is_public', true);
 
         // 都道府県で絞り込み（指定があれば）
         if (!empty($prefecture)) {
@@ -54,15 +55,61 @@ class ArtistController extends Controller
             ->take(10)
             ->get();
 
+        //最新イベント(現在の日付に近い順)
+        $upcomingEvents = Event::with('artist')
+            ->whereHas('artist', function($query) {
+                $query->where('is_approved', true);
+            })
+            ->where('start_at', '>=', now())
+            ->orderBy('start_at', 'asc')
+            ->take(10)
+            ->get();
+
+        //最新イベント(登録された日付が新しい順)
+        $recentEvents = Event::with('artist')
+            ->whereHas('artist', function($query) {
+                $query->where('is_approved', true);
+            })
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
         return view('home', [
             'artists' => $artists,
             'latestArtists' => $latestArtists,
             'latestVideos' => $latestVideos,
+            'upcomingEvents' => $upcomingEvents,
+            'recentEvents' => $recentEvents,
             'prefectures' => config('prefectures'),
             'genres' => config('genres'),
             'selected_prefecture' => $prefecture,
             'selected_genre' => $genre,
         ]);
+    }
+
+    public function videos()
+    {
+        $videos = ArtistVideo::with('artist')
+            ->whereHas('artist', function($query) {
+                $query->where('is_approved', true);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        return view('videos.index', compact('videos'));
+    }
+
+    public function events()
+    {
+        $events = Event::with('artist')
+            ->whereHas('artist', function($query) {
+                $query->where('is_approved', true);
+            })
+            ->where('start_at', '>=', now())
+            ->orderBy('start_at', 'asc')
+            ->paginate(20);
+
+        return view('events.index', compact('events'));
     }
 
     public function create()
@@ -142,6 +189,7 @@ class ArtistController extends Controller
                 'youtube_link' => 'nullable|url',
                 'soundcloud_link' => 'nullable|url',
                 'twitter_link' => 'nullable|url',
+                'is_public'    => 'nullable|boolean',
             ]);
             Log::debug('Validation passed', $validated);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -150,6 +198,7 @@ class ArtistController extends Controller
         }
 
         $validated['user_id'] = $artist->user_id; // または auth()->id()
+        $validated['is_public'] = $request->has('is_public'); // チェックボックスなので明示的に設定
         // Log::debug('After validate', $validated);
 
         $artistDir = storage_path('app/public/artist_photos');
@@ -202,9 +251,12 @@ class ArtistController extends Controller
 
     public function show(Artist $artist)
     {
+        // アーティストに関連する動画を取得
+        $videos = $artist->videos()->orderBy('created_at', 'desc')->get();
+
         // 公開済みなら誰でも見れる
         if ($artist->is_approved) {
-            return view('artist.show', compact('artist'));
+            return view('artist.show', compact('artist', 'videos'));
         }
 
         // ↓未承認の場合のみ制御が必要↓
@@ -216,7 +268,7 @@ class ArtistController extends Controller
             abort(403, '閲覧権限がありません');
         }
 
-        return view('artist.show', compact('artist'));
+        return view('artist.show', compact('artist', 'videos'));
     }
 
 }

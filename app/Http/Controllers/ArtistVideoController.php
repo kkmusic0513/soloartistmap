@@ -40,7 +40,8 @@ class ArtistVideoController extends Controller
     public function create(Artist $artist)
     {
         $this->authorize('update', $artist); // 本人 or admin
-        return view('videos.create', compact('artist'));
+        $videos = $artist->videos()->orderBy('created_at', 'desc')->get();
+        return view('videos.create', compact('artist', 'videos'));
     }
 
     public function store(Request $request, Artist $artist)

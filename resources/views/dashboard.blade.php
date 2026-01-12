@@ -96,24 +96,22 @@
                                 </span>
 
                                 {{-- 操作ボタン（本人 or 管理者のみ表示） --}}
-                            
-                                @if (auth()->id() === $artist->user_id || auth()->user()->role === 'admin')
-                                    <div class="mt-4 flex gap-2">
-                                        <a href="{{ route('artist.edit', $artist->id) }}"
-                                        class="text-blue-600 hover:underline">編集</a>
 
-                                        <form action="{{ route('artist.destroy', $artist->id) }}" method="POST" 
-                                            onsubmit="return confirm('本当に削除しますか？');">
+                                @if (auth()->id() === $artist->user_id || auth()->user()->role === 'admin')
+                                    <div class="mt-4 flex flex-wrap gap-2">
+                                        <a href="{{ route('artist.edit', $artist->id) }}"
+                                        class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium">編集</a>
+
+                                        <form action="{{ route('artist.destroy', $artist->id) }}" method="POST"
+                                            onsubmit="return confirm('本当に削除しますか？');" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:underline">削除</button>
+                                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium">削除</button>
                                         </form>
 
-                                        <a href="{{ route('events.index', $artist) }}" class="text-green-600 hover:underline">イベントを登録</a>
+                                        <a href="{{ route('artist.events.index', $artist) }}" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium">イベントを登録/編集</a>
 
-                                        <a href="{{ route('artists.videos.create', $artist) }}"  class="text-red-500 hover:underline">YouTube動画を登録</a>
-
-                                        <a href="{{ route('artists.videos.index', $artist) }}" class="text-purple-600 hover:underline">動画管理</a>
+                                        <a href="{{ route('artists.videos.create', $artist) }}" class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded text-sm font-medium">YouTube動画を登録/編集</a>
 
 
 

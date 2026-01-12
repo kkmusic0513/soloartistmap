@@ -56,6 +56,7 @@
                         <th class="border p-2">ユーザー名</th>
                         <th class="border p-2">アーティスト名</th>
                         <th class="border p-2">メールアドレス</th>
+                        <th class="border p-2">操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -65,6 +66,15 @@
                             <td class="border p-2">{{ $artist->user->name ?? '-' }}</td>
                             <td class="border p-2">{{ $artist->name }}</td>
                             <td class="border p-2">{{ $artist->user->email ?? '-' }}</td>
+                            <td class="border p-2">
+                                <form action="{{ route('admin.artists.disapprove', $artist->id) }}" method="POST"
+                                      onsubmit="return confirm('本当に未承認に戻しますか？');">
+                                    @csrf
+                                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
+                                        未承認に戻す
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

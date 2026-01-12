@@ -44,4 +44,14 @@ class AdminArtistController extends Controller
         return redirect()->route('admin.artists.index')
             ->with('success', "{$artist->name} さんを承認しました。");
     }
+
+    public function disapprove($id)
+    {
+        $artist = Artist::findOrFail($id);
+        $artist->is_approved = false;
+        $artist->save();
+
+        return redirect()->route('admin.artists.index')
+            ->with('success', "{$artist->name} さんを未承認に戻しました。");
+    }
 }
