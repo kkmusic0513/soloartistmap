@@ -1,6 +1,73 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
+        {{-- キービジュアル --}}
+        <div class="mb-12">
+            <div
+                x-data="keyVisualCarousel({ total: 3 })"
+                class="relative overflow-hidden rounded-lg"
+            >
+                {{-- スライド全体 --}}
+                <div
+                    class="flex transition-transform duration-700 ease-in-out"
+                    :style="`transform: translateX(-${currentTranslate}vw);`"
+                >
+                    {{-- キービジュアル画像1 --}}
+                    <div class="flex-shrink-0" style="width: 100vw;">
+                        <div class="relative" style="height: 400px;">
+                            <img src="{{ asset('images/keyvisual-1.jpg') }}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="text-center text-white px-4">
+                                    <h1 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-4">全国ソロアーティストマップ</h1>
+                                    <p class="text-lg md:text-xl">ソロアーティストのためのプラットフォーム</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- キービジュアル画像2 --}}
+                    <div class="flex-shrink-0" style="width: 100vw;">
+                        <div class="relative" style="height: 400px;">
+                            <img src="{{ asset('images/keyvisual-2.jpg') }}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="text-center text-white px-4">
+                                    <h1 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-4">あなたの音楽を届ける</h1>
+                                    <p class="text-lg md:text-xl">アーティスト登録で<br>動画作品・イベント情報を発信</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- キービジュアル画像3 --}}
+                    <div class="flex-shrink-0" style="width: 100vw;">
+                        <div class="relative" style="height: 400px;">
+                            <img src="{{ asset('images/keyvisual-3.jpg') }}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="text-center text-white px-4">
+                                    <h1 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-4">イベント・動画を共有</h1>
+                                    <p class="text-lg md:text-xl">ライブ情報や作品をファンと共有</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- インジケーター --}}
+                <div class="flex justify-center mt-4 space-x-3">
+                    <template x-for="i in total">
+                        <button
+                            @click="goToSlide(i - 1)"
+                            class="w-3 h-3 rounded-full transition-all duration-300"
+                            :class="currentIndex === (i - 1) ? 'bg-white scale-125' : 'bg-white bg-opacity-50'"
+                        ></button>
+                    </template>
+                </div>
+            </div>
+        </div>
+
         <h2 class="text-xl font-bold mb-4">新着アーティスト</h2>
 
         <div 
@@ -135,6 +202,49 @@
                 }
             }
         }
+
+        function keyVisualCarousel({ total }) {
+            return {
+                total,
+                currentIndex: 0,
+                currentTranslate: 0,
+                autoSlideInterval: null,
+
+                init() {
+                    this.startAutoSlide();
+                },
+
+                updateTranslate() {
+                    this.currentTranslate = this.currentIndex * 100; // 100vw単位で移動
+                },
+
+                next() {
+                    this.currentIndex = (this.currentIndex + 1) % this.total;
+                    this.updateTranslate();
+                },
+
+                goToSlide(index) {
+                    this.currentIndex = index;
+                    this.updateTranslate();
+                    this.resetAutoSlide();
+                },
+
+                startAutoSlide() {
+                    this.autoSlideInterval = setInterval(() => this.next(), 5000);
+                },
+
+                resetAutoSlide() {
+                    this.stopAutoSlide();
+                    this.startAutoSlide();
+                },
+
+                stopAutoSlide() {
+                    if (this.autoSlideInterval) {
+                        clearInterval(this.autoSlideInterval);
+                    }
+                }
+            }
+        }
         </script>
 
         <div class="flex justify-between items-center mb-4">
@@ -156,7 +266,9 @@
                         allowfullscreen>
                     </iframe>
 
-                    <p class="font-semibold mt-2">{{ $video->artist->name }}</p>
+                    <a href="{{ route('artist.show', $video->artist) }}" class="font-semibold mt-2 text-blue-600 hover:text-blue-800">
+                        {{ $video->artist->name }}
+                    </a>
                     @if($video->title)
                         <p class="text-sm text-gray-600">{{ $video->title }}</p>
                     @endif
@@ -192,7 +304,7 @@
                             class="px-2 flex-shrink-0"
                             :style="`width: ${itemWidth}px`"
                         >
-                            <div class="border rounded p-4 bg-white shadow hover:shadow-lg transition-shadow">
+                            <a href="{{ route('events.show', $event) }}" class="block border rounded p-4 bg-white shadow hover:shadow-lg transition-shadow">
                                 @if($event->photo)
                                     <img src="{{ asset('storage/' . $event->photo) }}" class="w-full h-32 object-cover rounded mb-2">
                                 @endif
@@ -210,7 +322,7 @@
                                 @if($event->description)
                                     <p class="text-sm text-gray-700">{{ Str::limit($event->description, 80) }}</p>
                                 @endif
-                            </div>
+                            </a>
                         </div>
                     @endforeach
                 </div>
@@ -260,7 +372,7 @@
                             class="px-2 flex-shrink-0"
                             :style="`width: ${itemWidth}px`"
                         >
-                            <div class="border rounded p-4 bg-white shadow hover:shadow-lg transition-shadow">
+                            <a href="{{ route('events.show', $event) }}" class="block border rounded p-4 bg-white shadow hover:shadow-lg transition-shadow">
                                 @if($event->photo)
                                     <img src="{{ asset('storage/' . $event->photo) }}" class="w-full h-32 object-cover rounded mb-2">
                                 @endif
@@ -278,7 +390,7 @@
                                 @if($event->description)
                                     <p class="text-sm text-gray-700">{{ Str::limit($event->description, 80) }}</p>
                                 @endif
-                            </div>
+                            </a>
                         </div>
                     @endforeach
                 </div>

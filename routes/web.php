@@ -43,6 +43,9 @@ Route::resource('artist', ArtistController::class)
 Route::get('/artist/{artist}', [ArtistController::class, 'show'])
     ->name('artist.show');
 
+// イベント単一ページ（公開）
+Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+
 // アーティストに紐づくイベント管理（ログイン・権限あり）
 Route::middleware('auth')->group(function () {
     Route::get('artist/{artist}/events', [EventController::class, 'index'])->name('artist.events.index');

@@ -86,13 +86,22 @@
                             @auth
                                 {{-- ステータス --}}
                                 <span class="
-                                    inline-block px-2 py-1 text-xs rounded 
-                                    @if($artist->is_approved === 1) bg-green-100 text-green-700
+                                    inline-block px-2 py-1 text-xs rounded
+                                    @if($artist->is_approved === 1 && $artist->is_public === 1) bg-green-100 text-green-700
+                                    @elseif($artist->is_approved === 1 && $artist->is_public === 0) bg-gray-200 text-gray-700
                                     @elseif($artist->is_approved === 0) bg-yellow-100 text-yellow-700
                                     @else bg-gray-200 text-gray-700
                                     @endif
                                 ">
-                                    {{ $artist->is_approved === 1 ? '公開中' : ($artist->is_approved === 0 ? '承認待ち' : '非公開') }}
+                                    @if($artist->is_approved === 1 && $artist->is_public === 1)
+                                        公開中
+                                    @elseif($artist->is_approved === 1 && $artist->is_public === 0)
+                                        非公開
+                                    @elseif($artist->is_approved === 0)
+                                        承認待ち
+                                    @else
+                                        非公開
+                                    @endif
                                 </span>
 
                                 {{-- 操作ボタン（本人 or 管理者のみ表示） --}}

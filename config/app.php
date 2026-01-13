@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Facade;
 
 return [
 
-    'name' => env('APP_NAME', '全国ソロアーティストマップ'),
+    'name' => env('APP_NAME', 'Laravel'),
 
     'env' => env('APP_ENV', 'production'),
 

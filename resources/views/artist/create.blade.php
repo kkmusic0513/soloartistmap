@@ -21,9 +21,12 @@
 
                 {{-- ★ メイン画像 --}}
                 <div>
-                    <label class="block font-medium mb-1">メイン画像</label>
+                    <label class="block font-medium mb-1">メイン画像 <span class="text-red-500">*</span></label>
                     <input type="file" name="main_photo" accept="image/*" required
                         class="w-full border rounded px-3 py-2">
+                    <p class="text-sm text-gray-600 mt-1">
+                        JPEG、PNG、GIF、WebP形式 / 最大10MB / 推奨サイズ: 100x100px 以上、8000x8000px 以下
+                    </p>
                 </div>
 
                 {{-- ★ サブ画像1 --}}
@@ -31,6 +34,9 @@
                     <label class="block font-medium mb-1">サブ画像 1</label>
                     <input type="file" name="sub_photo_1" accept="image/*"
                         class="w-full border rounded px-3 py-2">
+                    <p class="text-sm text-gray-600 mt-1">
+                        JPEG、PNG、GIF、WebP形式 / 最大10MB / 推奨サイズ: 100x100px 以上、8000x8000px 以下
+                    </p>
                 </div>
 
                 {{-- ★ サブ画像2 --}}
@@ -38,6 +44,9 @@
                     <label class="block font-medium mb-1">サブ画像 2</label>
                     <input type="file" name="sub_photo_2" accept="image/*"
                         class="w-full border rounded px-3 py-2">
+                    <p class="text-sm text-gray-600 mt-1">
+                        JPEG、PNG、GIF、WebP形式 / 最大10MB / 推奨サイズ: 100x100px 以上、8000x8000px 以下
+                    </p>
                 </div>
 
                 {{-- 活動地域 --}}
@@ -67,6 +76,7 @@
                     <label class="block font-medium mb-1">プロフィール</label>
                     <textarea name="profile" rows="4"
                         class="w-full border rounded px-3 py-2"></textarea>
+                    <p class="text-sm text-gray-600 mt-1">1000文字以内</p>
                 </div>
 
                 <div>

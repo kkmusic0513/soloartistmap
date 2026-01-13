@@ -74,7 +74,7 @@
                             <div class="bg-gray-100 p-4 rounded">
                                 <p class="text-sm text-gray-600">📍 場所: ダッシュボード → 「＋ アーティストを登録する」</p>
                                 <p class="text-sm text-gray-600">📝 必要な情報: アーティスト名、活動地域、ジャンル、プロフィール、写真など</p>
-                                <p class="text-sm text-gray-600">⏱️ 承認: 管理者承認後に公開されます</p>
+                                {{-- <p class="text-sm text-gray-600">⏱️ 承認: 管理者承認後に公開されます</p> --}}
                             </div>
                         </div>
                     </div>
@@ -116,8 +116,8 @@
         <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
             <h3 class="text-lg font-bold text-yellow-800 mb-3">💡 ポイント</h3>
             <ul class="text-yellow-700 space-y-2">
-                <li>• 登録したアーティスト情報は管理者承認後に公開されます</li>
-                <li>• 承認済みのアーティストはホームページで検索・閲覧できるようになります</li>
+                {{-- <li>• 登録したアーティスト情報は管理者承認後に公開されます</li> --}}
+                {{-- <li>• 承認済みのアーティストはホームページで検索・閲覧できるようになります</li> --}}
                 <li>• 各アーティストごとにイベント・動画を個別に管理できます</li>
                 <li>• プロフィール情報はいつでも編集可能です</li>
             </ul>

@@ -51,6 +51,9 @@ class ArtistController extends Controller
 
         //新着動画(10個)
         $latestVideos = ArtistVideo::with('artist')
+            ->whereHas('artist', function($query) {
+                $query->where('is_approved', true)->where('is_public', true);
+            })
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
@@ -58,7 +61,7 @@ class ArtistController extends Controller
         //最新イベント(現在の日付に近い順)
         $upcomingEvents = Event::with('artist')
             ->whereHas('artist', function($query) {
-                $query->where('is_approved', true);
+                $query->where('is_approved', true)->where('is_public', true);
             })
             ->where('start_at', '>=', now())
             ->orderBy('start_at', 'asc')
@@ -68,7 +71,7 @@ class ArtistController extends Controller
         //最新イベント(登録された日付が新しい順)
         $recentEvents = Event::with('artist')
             ->whereHas('artist', function($query) {
-                $query->where('is_approved', true);
+                $query->where('is_approved', true)->where('is_public', true);
             })
             ->orderBy('created_at', 'desc')
             ->take(10)
@@ -91,7 +94,7 @@ class ArtistController extends Controller
     {
         $videos = ArtistVideo::with('artist')
             ->whereHas('artist', function($query) {
-                $query->where('is_approved', true);
+                $query->where('is_approved', true)->where('is_public', true);
             })
             ->orderBy('created_at', 'desc')
             ->paginate(20);
@@ -103,7 +106,7 @@ class ArtistController extends Controller
     {
         $events = Event::with('artist')
             ->whereHas('artist', function($query) {
-                $query->where('is_approved', true);
+                $query->where('is_approved', true)->where('is_public', true);
             })
             ->where('start_at', '>=', now())
             ->orderBy('start_at', 'asc')
@@ -119,35 +122,101 @@ class ArtistController extends Controller
 
     public function store(Request $request)
     {
+        // デバッグ: リクエスト情報をログに記録
+        \Log::info('Artist store request', [
+            'method' => $request->method(),
+            'has_files' => $request->hasFile('main_photo'),
+            'user_agent' => $request->userAgent(),
+            'all_data' => $request->all()
+        ]);
+
         // バリデーション
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'main_photo'   => 'nullable|image|max:5120',
-            'sub_photo_1'  => 'nullable|image|max:5120',
-            'sub_photo_2'  => 'nullable|image|max:5120',
+            'main_photo' => [
+                'required',
+                'image',
+                'mimes:jpeg,png,jpg,gif,webp',
+                'max:10240', // 10MB
+                'dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
+            ],
+            'sub_photo_1' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,jpg,gif,webp',
+                'max:10240', // 10MB
+                'dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
+            ],
+            'sub_photo_2' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,jpg,gif,webp',
+                'max:10240', // 10MB
+                'dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
+            ],
             'prefecture' => 'required|string|max:255',
             'genre' => 'nullable|string|max:255',
-            'profile' => 'nullable|string',
-            'official_website' => 'nullable|url',
-            'youtube_link' => 'nullable|url',
-            'soundcloud_link' => 'nullable|url',
-            'twitter_link' => 'nullable|url',
+            'profile' => 'nullable|string|max:1000',
+            'official_website' => 'nullable|url|max:255',
+            'youtube_link' => 'nullable|url|max:255',
+            'soundcloud_link' => 'nullable|url|max:255',
+            'twitter_link' => 'nullable|url|max:255',
+        ], [
+            'main_photo.image' => 'メイン画像は画像ファイルを選択してください。',
+            'main_photo.mimes' => 'メイン画像はJPEG、PNG、GIF、WebP形式のみ対応しています。',
+            'main_photo.max' => 'メイン画像のサイズは10MB以下にしてください。',
+            'main_photo.dimensions' => 'メイン画像のサイズは幅100-8000px、高さ100-8000pxの範囲にしてください。',
+
+            'sub_photo_1.image' => 'サブ画像1は画像ファイルを選択してください。',
+            'sub_photo_1.mimes' => 'サブ画像1はJPEG、PNG、GIF、WebP形式のみ対応しています。',
+            'sub_photo_1.max' => 'サブ画像1のサイズは10MB以下にしてください。',
+            'sub_photo_1.dimensions' => 'サブ画像1のサイズは幅100-8000px、高さ100-8000pxの範囲にしてください。',
+
+            'sub_photo_2.image' => 'サブ画像2は画像ファイルを選択してください。',
+            'sub_photo_2.mimes' => 'サブ画像2はJPEG、PNG、GIF、WebP形式のみ対応しています。',
+            'sub_photo_2.max' => 'サブ画像2のサイズは10MB以下にしてください。',
+            'sub_photo_2.dimensions' => 'サブ画像2のサイズは幅100-8000px、高さ100-8000pxの範囲にしてください。',
+
+            'name.required' => 'アーティスト名は必須です。',
+            'name.max' => 'アーティスト名は255文字以内で入力してください。',
+
+            'prefecture.required' => '活動地域は必須です。',
+
+            'profile.max' => 'プロフィールは1000文字以内で入力してください。',
+
+            'official_website.url' => '公式ウェブサイトは正しいURL形式で入力してください。',
+            'youtube_link.url' => 'YouTubeリンクは正しいURL形式で入力してください。',
+            'soundcloud_link.url' => 'SoundCloudリンクは正しいURL形式で入力してください。',
+            'twitter_link.url' => 'X(Twitter)リンクは正しいURL形式で入力してください。',
         ]);
         // user_id を追加
         $validated['user_id'] = auth()->id();
+        \Log::info('Artist user_id set', ['user_id' => auth()->id()]);
 
         // ====== 画像保存処理 ======
         $paths = [];
         foreach (['main_photo', 'sub_photo_1', 'sub_photo_2'] as $photoField) {
             if ($request->hasFile($photoField)) {
-                $paths[$photoField] = $request->file($photoField)->store('artist_photos', 'public');
+                \Log::info('Processing image', ['field' => $photoField]);
+                $file = $request->file($photoField);
+                \Log::info('File info', [
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getMimeType(),
+                    'size' => $file->getSize(),
+                    'error' => $file->getError()
+                ]);
+
+                $paths[$photoField] = $file->store('artist_photos', 'public');
+                \Log::info('Image stored', ['field' => $photoField, 'path' => $paths[$photoField]]);
             }
         }
 
         // DB作成
+        \Log::info('Creating artist in database', array_merge($validated, $paths));
         $artist = Artist::create(array_merge($validated, $paths));
+        \Log::info('Artist created successfully', ['artist_id' => $artist->id]);
 
-        return redirect()->route('artist.create')->with('success', '登録が完了しました！');
+        return redirect()->route('dashboard')->with('success', 'アーティストの登録が完了しました！');
     }
 
 
@@ -179,9 +248,27 @@ class ArtistController extends Controller
         try {
             $validated = $request->validate([
                 'name'         => 'required|string|max:255',
-                'main_photo'   => 'nullable|image|max:5120',
-                'sub_photo_1'  => 'nullable|image|max:5120',
-                'sub_photo_2'  => 'nullable|image|max:5120',
+                'main_photo' => [
+                    'nullable',
+                    'image',
+                    'mimes:jpeg,png,jpg,gif,webp',
+                    'max:10240', // 10MB
+                    'dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
+                ],
+                'sub_photo_1' => [
+                    'nullable',
+                    'image',
+                    'mimes:jpeg,png,jpg,gif,webp',
+                    'max:10240', // 10MB
+                    'dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
+                ],
+                'sub_photo_2' => [
+                    'nullable',
+                    'image',
+                    'mimes:jpeg,png,jpg,gif,webp',
+                    'max:10240', // 10MB
+                    'dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
+                ],
                 'prefecture'   => 'required|string|max:255',
                 'genre'        => 'nullable|string|max:255',
                 'profile'      => 'nullable|string',
