@@ -20,9 +20,9 @@ class DashboardController extends Controller
                          ->get();
 
         // ステータスごとの件数
-        $count_public  = $artists->where('is_approved', 1)->count();
+        $count_public  = $artists->where('is_approved', 1)->where('is_public', 1)->count();
         $count_pending = $artists->where('is_approved', 0)->count();
-        $count_private = 0; // 非公開機能を使う場合は別途条件追加
+        $count_private = $artists->where('is_approved', 1)->where('is_public', 0)->count();
 
         // DM未読DM件数
         $dm_unread_count = DmMessage::where('to_user_id', $user->id)
