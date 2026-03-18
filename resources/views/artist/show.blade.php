@@ -220,7 +220,7 @@
         @endauth
 
         {{-- DM機能 --}}
-        @auth
+        {{-- @auth
             @if(auth()->id() != $artist->user_id)
                 @php
                     $unread = \App\Models\DmMessage::where('from_user_id', $artist->user_id)
@@ -241,7 +241,7 @@
                     @endif
                 </a>
             @endif
-        @endauth
+        @endauth --}}
 
     </div>
 </x-app-layout>

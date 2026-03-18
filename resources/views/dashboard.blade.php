@@ -29,7 +29,7 @@
                 ->count();
         @endphp
 
-        <a href="{{ route('dm.index') }}" 
+        {{-- <a href="{{ route('dm.index') }}" 
         class="relative inline-flex items-center bg-white p-4 mb-6 rounded-lg shadow hover:bg-gray-50 w-full">
             <span class="font-semibold text-lg">DM一覧</span>
 
@@ -38,7 +38,7 @@
                     {{ $unreadTotal }}
                 </span>
             @endif
-        </a>
+        </a> --}}
 
 
 
