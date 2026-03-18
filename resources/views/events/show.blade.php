@@ -38,7 +38,22 @@
                             </a>
                             @if($event->artist->prefecture || $event->artist->genre)
                                 <p class="text-sm text-gray-600">
-                                    {{ $event->artist->prefecture }} @if($event->artist->prefecture && $event->artist->genre) / @endif {{ $event->artist->genre }}
+                                    {{-- 地域 (配列なら連結、そうでなければそのまま) --}}
+                                    @if(is_array($event->artist->prefecture))
+                                        {{ implode('・', $event->artist->prefecture) }}
+                                    @else
+                                        {{ $event->artist->prefecture }}
+                                    @endif
+
+                                    {{-- セパレーター --}}
+                                    @if($event->artist->prefecture && $event->artist->genre) / @endif
+
+                                    {{-- ジャンル (配列なら連結、そうでなければそのまま) --}}
+                                    @if(is_array($event->artist->genre))
+                                        {{ implode('・', $event->artist->genre) }}
+                                    @else
+                                        {{ $event->artist->genre }}
+                                    @endif
                                 </p>
                             @endif
                         </div>

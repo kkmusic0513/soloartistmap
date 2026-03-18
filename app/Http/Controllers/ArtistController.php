@@ -35,12 +35,19 @@ class ArtistController extends Controller
 
         // 都道府県で絞り込み（指定があれば）
         if (!empty($prefecture)) {
-            $query->where('prefecture', $prefecture);
+            // ["東京都","神奈川県"] のような文字列の中に "東京都" が含まれているか
+            $query->where('prefecture', 'like', '%' . $prefecture . '%');
         }
 
-        // ジャンルで絞り込み（指定があれば）
+        // ジャンルで絞り込み（JSON配列の中身を検索）
         if (!empty($genre)) {
-            $query->where('genre', $genre);
+            $query->where(function($q) use ($genre) {
+                // 1. 通常のJSON検索（念のため残す）
+                $q->whereJsonContains('genre', $genre)
+                // 2. 文字列として曖昧検索（["J-POP","ロック"] という文字列の中に "ロック" があるか）
+                // これなら Unicode エスケープの状態に関わらずヒットします
+                ->orWhere('genre', 'like', '%' . $genre . '%');
+            });
         }
 
         // 並びは新着順（必要なら変更）
@@ -154,13 +161,17 @@ class ArtistController extends Controller
                 'max:10240', // 10MB
                 'dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
             ],
-            'prefecture' => 'required|string|max:255',
-            'genre' => 'nullable|string|max:255',
+            'prefecture' => 'required|array', // arrayに変更
+            'prefecture.*' => 'string',
+            'genre' => 'nullable|array', // string ではなく array に変更
+            'genre.*' => 'string|max:255',
             'profile' => 'nullable|string|max:1000',
             'official_website' => 'nullable|url|max:255',
             'youtube_link' => 'nullable|url|max:255',
             'soundcloud_link' => 'nullable|url|max:255',
             'twitter_link' => 'nullable|url|max:255',
+            'instagram_link' => 'nullable|url',
+            'tiktok_link'    => 'nullable|url',
         ], [
             'main_photo.image' => 'メイン画像は画像ファイルを選択してください。',
             'main_photo.mimes' => 'メイン画像はJPEG、PNG、GIF、WebP形式のみ対応しています。',
@@ -189,6 +200,11 @@ class ArtistController extends Controller
             'soundcloud_link.url' => 'SoundCloudリンクは正しいURL形式で入力してください。',
             'twitter_link.url' => 'X(Twitter)リンクは正しいURL形式で入力してください。',
         ]);
+
+        // ジャンルが未選択の場合は空配列をセット
+        $validated['genre'] = $request->input('genre', []);
+        $validated['prefecture'] = $request->input('prefecture', []);
+
         // user_id を追加
         $validated['user_id'] = auth()->id();
         \Log::info('Artist user_id set', ['user_id' => auth()->id()]);
@@ -269,13 +285,17 @@ class ArtistController extends Controller
                     'max:10240', // 10MB
                     'dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
                 ],
-                'prefecture'   => 'required|string|max:255',
-                'genre'        => 'nullable|string|max:255',
+                'prefecture' => 'required|array',
+                'prefecture.*' => 'string',
+                'genre' => 'nullable|array',
+                'genre.*' => 'string|max:255',
                 'profile'      => 'nullable|string',
                 'official_website' => 'nullable|url',
                 'youtube_link' => 'nullable|url',
                 'soundcloud_link' => 'nullable|url',
                 'twitter_link' => 'nullable|url',
+                'instagram_link' => 'nullable|url',
+                'tiktok_link'    => 'nullable|url',
                 'is_public'    => 'nullable|boolean',
             ]);
             Log::debug('Validation passed', $validated);
@@ -286,6 +306,10 @@ class ArtistController extends Controller
 
         $validated['user_id'] = $artist->user_id; // または auth()->id()
         $validated['is_public'] = $request->has('is_public'); // チェックボックスなので明示的に設定
+        // 重要：チェックボックスが空の場合は空配列で上書き
+        $validated['genre'] = $request->input('genre', []);
+        $validated['prefecture'] = $request->input('prefecture', []);
+        $validated['is_public'] = $request->has('is_public');
         // Log::debug('After validate', $validated);
 
         $artistDir = storage_path('app/public/artist_photos');

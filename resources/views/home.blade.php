@@ -443,10 +443,12 @@
                 {{-- ジャンル --}}
                 <div>
                     <label class="block text-sm text-gray-600 mb-1">ジャンル</label>
+                    {{-- ジャンル（検索用セレクトボックス） --}}
                     <select name="genre" class="w-full border px-2 py-1 rounded">
                         <option value="">すべて</option>
                         @foreach($genres as $g)
-                            <option value="{{ $g }}" @selected(($selected_genre ?? '') === $g)>
+                            {{-- $selected_genre と一致するか判定 --}}
+                            <option value="{{ $g }}" @selected($selected_genre === $g)>
                                 {{ $g }}
                             </option>
                         @endforeach
@@ -486,7 +488,15 @@
                             {{-- カード本体 --}}
                             <div class="p-4">
                                 <h3 class="font-bold text-lg mb-2">{{ $artist->name }}</h3>
-                                <p class="text-sm text-gray-600">{{ $artist->prefecture }} / {{ $artist->genre }}</p>
+                                <p class="text-sm text-gray-600">
+                                    {{-- 都道府県の表示修正 --}}
+                                    @if(is_array($artist->prefecture))
+                                        {{ implode('・', $artist->prefecture) }}
+                                    @else
+                                        {{ $artist->prefecture }}
+                                    @endif / 
+                                    {{ is_array($artist->genre) ? implode(', ', $artist->genre) : $artist->genre }}
+                                </p>
                             </div>
                         </a>
                     </div>

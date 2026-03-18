@@ -49,26 +49,50 @@
                     </p>
                 </div>
 
-                {{-- 活動地域 --}}
-                <div>
-                    <label class="block font-medium mb-1">活動地域（県名）</label>
-                    <select name="prefecture" required class="w-full border rounded px-3 py-2">
-                        <option value="">選択してください</option>
+                {{-- 活動地域（複数選択可） --}}
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-3">
+                        活動地域（複数選択可）
+                    </label>
+                    
+                    {{-- 
+                        grid-cols-2 (スマホ: 2列) 
+                        sm:grid-cols-3 (少し広いスマホ: 3列)
+                        md:grid-cols-4 (タブレット: 4列)
+                        lg:grid-cols-6 (PC: 6列) 
+                    --}}
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-2 gap-x-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
                         @foreach(config('prefectures') as $pref)
-                            <option>{{ $pref }}</option>
+                            <label class="flex items-center space-x-2 text-sm cursor-pointer hover:bg-white p-1.5 rounded transition-colors group">
+                                <input type="checkbox" name="prefecture[]" value="{{ $pref }}"
+                                    @checked(in_array($pref, old('prefecture', is_array($artist->prefecture ?? null) ? $artist->prefecture : ($artist->prefecture ? [$artist->prefecture] : []))))
+                                    class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition cursor-pointer">
+                                <span class="text-gray-700 group-hover:text-blue-700">{{ $pref }}</span>
+                            </label>
                         @endforeach
-                    </select>
+                    </div>
+
+                    @error('prefecture')
+                        <p class="text-red-500 text-xs mt-2 font-semibold">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                {{-- ジャンル --}}
-                <div>
-                    <label class="block font-medium mb-1">ジャンル</label>
-                    <select name="genre" class="w-full border rounded px-3 py-2">
-                        <option value="">選択してください</option>
+                {{-- ジャンル（複数選択） --}}
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label class="block font-bold mb-2 text-gray-700">ジャンル（複数選択可）</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         @foreach(config('genres') as $genre)
-                            <option>{{ $genre }}</option>
+                            <label class="flex items-center space-x-2 cursor-pointer hover:bg-white p-1 rounded transition">
+                                <input type="checkbox" name="genre[]" value="{{ $genre }}"
+                                    {{ is_array(old('genre')) && in_array($genre, old('genre')) ? 'checked' : '' }}
+                                    class="rounded border-gray-300 text-pink-500 focus:ring-pink-500">
+                                <span class="text-sm text-gray-600">{{ $genre }}</span>
+                            </label>
                         @endforeach
-                    </select>
+                    </div>
+                    @error('genre')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- プロフィール --}}
@@ -97,6 +121,18 @@
                 <div>
                     <label class="block font-medium mb-1">X(Twitter)リンク</label>
                     <input type="url" name="twitter_link" value="{{ old('twitter_link') }}"
+                        class="w-full border rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block font-medium mb-1">Instagramリンク</label>
+                    <input type="url" name="instagram_link" value="{{ old('instagram_link', $artist->instagram_link ?? '') }}"
+                        placeholder="https://www.instagram.com/..."
+                        class="w-full border rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block font-medium mb-1">TikTokリンク</label>
+                    <input type="url" name="tiktok_link" value="{{ old('tiktok_link', $artist->tiktok_link ?? '') }}"
+                        placeholder="https://www.tiktok.com/@..."
                         class="w-full border rounded px-3 py-2">
                 </div>
 

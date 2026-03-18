@@ -32,32 +32,61 @@
             @endif
             <input type="file" name="sub_photo_2" accept="image/*" class="mb-4">
 
-            {{-- 活動地域 --}}
-            <div>
-                <label class="block font-medium mb-1">活動地域（県名）</label>
-                <select name="prefecture" required class="w-full border rounded px-3 py-2">
-                    <option value="">選択してください</option>
+            {{-- 活動地域（複数選択可） --}}
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-3">
+                    活動地域（複数選択可）
+                </label>
+                
+                {{-- 
+                    レスポンシブ・グリッド設定:
+                    スマホ: 2列, 少し広いスマホ: 3列, タブレット: 4列, PC(1024px~): 6列
+                --}}
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-2 gap-x-4 bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm">
                     @foreach(config('prefectures') as $pref)
-                        <option value="{{ $pref }}" 
-                            {{ old('prefecture', $artist->prefecture) === $pref ? 'selected' : '' }}>
-                            {{ $pref }}
-                        </option>
+                        @php
+                            // DBに保存されている値が配列であることを保証しつつ、チェック状態を判定
+                            $savedPrefectures = is_array($artist->prefecture) ? $artist->prefecture : (json_decode($artist->prefecture, true) ?: []);
+                            $isChecked = in_array($pref, old('prefecture', $savedPrefectures));
+                        @endphp
+                        <label class="flex items-center space-x-2 text-sm cursor-pointer hover:bg-white p-1.5 rounded transition-colors group">
+                            <input type="checkbox" 
+                                name="prefecture[]" 
+                                value="{{ $pref }}"
+                                @checked($isChecked)
+                                class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition cursor-pointer">
+                            <span class="text-gray-700 group-hover:text-blue-700 font-medium">{{ $pref }}</span>
+                        </label>
                     @endforeach
-                </select>
+                </div>
+
+                @error('prefecture')
+                    <p class="text-red-500 text-xs mt-2 font-semibold">{{ $message }}</p>
+                @enderror
             </div>
 
-            {{-- ジャンル --}}
-            <div>
-                <label class="block font-medium mb-1">ジャンル</label>
-                <select name="genre" class="w-full border rounded px-3 py-2">
-                    <option value="">選択してください</option>
+            {{-- ジャンル（複数選択・編集用） --}}
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                <label class="block font-bold mb-2 text-gray-700">ジャンル（複数選択可）</label>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     @foreach(config('genres') as $genre)
-                        <option value="{{ $genre }}" 
-                            {{ old('genre', $artist->genre) === $genre ? 'selected' : '' }}>
-                            {{ $genre }}
-                        </option>
+                        @php
+                            // 保存されている値、またはバリデーションエラーで戻ってきた値を確認
+                            $checked = false;
+                            if (old('genre')) {
+                                $checked = in_array($genre, old('genre'));
+                            } elseif (is_array($artist->genre)) {
+                                $checked = in_array($genre, $artist->genre);
+                            }
+                        @endphp
+                        <label class="flex items-center space-x-2 cursor-pointer hover:bg-white p-1 rounded transition">
+                            <input type="checkbox" name="genre[]" value="{{ $genre }}"
+                                {{ $checked ? 'checked' : '' }}
+                                class="rounded border-gray-300 text-pink-500 focus:ring-pink-500">
+                            <span class="text-sm text-gray-600">{{ $genre }}</span>
+                        </label>
                     @endforeach
-                </select>
+                </div>
             </div>
 
             {{-- プロフィール --}}
@@ -88,6 +117,18 @@
                 <label class="block font-medium mb-1">X(Twitter)リンク</label>
                 <input type="url" name="twitter_link"
                     value="{{ old('twitter_link', $artist->twitter_link) }}"
+                    class="w-full border rounded px-3 py-2">
+            </div>
+            <div>
+                <label class="block font-medium mb-1">Instagramリンク</label>
+                <input type="url" name="instagram_link" value="{{ old('instagram_link', $artist->instagram_link ?? '') }}"
+                    placeholder="https://www.instagram.com/..."
+                    class="w-full border rounded px-3 py-2">
+            </div>
+            <div>
+                <label class="block font-medium mb-1">TikTokリンク</label>
+                <input type="url" name="tiktok_link" value="{{ old('tiktok_link', $artist->tiktok_link ?? '') }}"
+                    placeholder="https://www.tiktok.com/@..."
                     class="w-full border rounded px-3 py-2">
             </div>
 

@@ -4,133 +4,118 @@
         {{-- 戻るボタン --}}
         <div class="mb-4">
             <a href="{{ route('home') }}"
-               class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow">
+               class="inline-block bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg transition duration-200">
                ← トップに戻る
             </a>
         </div>
 
-        <h1 class="text-4xl font-bold text-center mb-8">使い方ガイド</h1>
+        <h1 class="text-4xl font-black text-center mb-4 text-gray-800">使い方ガイド</h1>
+        <p class="text-center text-gray-500 mb-10">あなたの活動を、もっと多くの人へ届けるための3分ガイド</p>
 
-        <div class="mb-8 bg-blue-50 p-6 rounded-lg">
-            <h2 class="text-2xl font-bold mb-4">🎵 全国ソロアーティストマップへようこそ！</h2>
-            <p class="text-lg text-gray-700 leading-relaxed">
-                全国ソロアーティストマップは、ソロアーティストのためのプラットフォームです。<br>
-                ユーザー登録するとアーティストを登録できます。<br>
-                ひとつのユーザーアカウントで複数のアーティストを登録・管理できます。
+        {{-- イントロダクション --}}
+        <div class="mb-10 bg-gradient-to-r from-blue-600 to-indigo-700 p-8 rounded-2xl shadow-xl text-white">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <span class="mr-2">🎸</span> 全国ソロアーティストマップへようこそ！
+            </h2>
+            <p class="text-lg leading-relaxed opacity-90">
+                ここは、一人で活動する表現者たちが主役のプラットフォームです。<br>
+                「自分のホームページを持つのは大変だけど、ライブ情報や動画をまとめておきたい」<br>
+                そんなアーティストの願いを一箇所で叶えます。<br>
+                現在は、「一人で」活動している方のみの登録をお願いします。
             </p>
         </div>
 
-        <div class="mb-12">
-            <h2 class="text-3xl font-bold mb-6">📋 利用開始までの流れ</h2>
+        {{-- ステップ --}}
+        <div class="space-y-12 mb-12">
+            
+            {{-- STEP 1 --}}
+            <div class="relative pl-8 border-l-4 border-blue-500">
+                <span class="absolute -left-4 top-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">1</span>
+                <h3 class="text-2xl font-bold mb-2">まずはユーザー登録</h3>
+                <p class="text-gray-600 mb-4">
+                    まずはアカウントを作成しましょう。SNSのアカウントを作る感覚でOKです。
+                </p>
+                <div class="bg-white border border-gray-200 p-5 rounded-xl shadow-sm">
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li>✅ <strong>メールアドレス</strong> と <strong>パスワード</strong> だけで完了！</li>
+                        <li>✅ <strong>名前</strong> は本名じゃなくても大丈夫です。</li>
+                    </ul>
+                </div>
+            </div>
 
-            <div class="space-y-8">
-                {{-- ステップ1: ユーザー登録 --}}
-                <div class="bg-white shadow-lg rounded-lg p-6 border-l-4 border-blue-500">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                                1
-                            </div>
-                        </div>
-                        <div class="ml-6">
-                            <h3 class="text-xl font-bold mb-3">新規ユーザー登録</h3>
-                            <p class="text-gray-600 mb-4">
-                                まずはユーザーアカウントを作成しましょう。メールアドレスとパスワードを登録してください。
-                            </p>
-                            <div class="bg-gray-100 p-4 rounded">
-                                <p class="text-sm text-gray-600">📍 場所: 右上の「新規登録」ボタン</p>
-                                <p class="text-sm text-gray-600">📧 必要な情報: メールアドレス、パスワード、名前</p>
-                            </div>
-                        </div>
+            {{-- STEP 2 --}}
+            <div class="relative pl-8 border-l-4 border-green-500">
+                <span class="absolute -left-4 top-0 w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold">2</span>
+                <h3 class="text-2xl font-bold mb-2">「アーティスト」を登録する（複数OK！）</h3>
+                <p class="text-gray-600 mb-4">
+                    アーティストのプロフィールを作成します。<br>
+                    <strong>(例)「アコースティック活動」と「DTM活動」を分けて(名義が違う場合など)登録</strong>することもできます。
+                </p>
+                
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div class="bg-green-50 p-5 rounded-xl border border-green-100">
+                        <h4 class="font-bold text-green-800 mb-2">💡 登録のコツ</h4>
+                        <p class="text-sm text-green-700 leading-relaxed">
+                            プロフィールを詳しく書くと、後日<strong>あなたが登録した情報が紹介</strong>される場合があります。
+                        </p>
                     </div>
                 </div>
+            </div>
 
-                {{-- ステップ2: アーティスト登録 --}}
-                <div class="bg-white shadow-lg rounded-lg p-6 border-l-4 border-green-500">
-                    <div class="flex items-start">
-                        <div class="ml-6">
-                            <div class="flex items-center mb-3">
-                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                                    2
-                                </div>
-                                <h3 class="text-xl font-bold ml-6">アーティスト登録</h3>
-                            </div>
-                            <p class="text-gray-600 mb-4">
-                                ユーザーアカウント作成後、アーティスト情報を登録します。<br>
-                                <strong>
-                                    ひとつのユーザーアカウントで複数のアーティストを登録・管理できます。
-                                </strong>
-                            </p>
-
-                            <div class="bg-green-50 p-4 rounded mb-4">
-                                <h4 class="font-bold text-green-800 mb-2">🎯 複数アーティスト登録のメリット</h4>
-                                <ul class="text-green-700 space-y-1">
-                                    <li>• 異なるジャンルでの活動を分けて管理</li>
-                                    <li>• プロジェクトごとのアーティスト名を使い分け</li>
-                                    <li>• コラボレーション作品も個別に管理</li>
-                                </ul>
-                            </div>
-
-                            <div class="bg-gray-100 p-4 rounded">
-                                <p class="text-sm text-gray-600">📍 場所: ダッシュボード → 「＋ アーティストを登録する」</p>
-                                <p class="text-sm text-gray-600">📝 必要な情報: アーティスト名、活動地域、ジャンル、プロフィール、写真など</p>
-                                {{-- <p class="text-sm text-gray-600">⏱️ 承認: 管理者承認後に公開されます</p> --}}
-                            </div>
-                        </div>
+            {{-- STEP 3 --}}
+            <div class="relative pl-8 border-l-4 border-purple-500">
+                <span class="absolute -left-4 top-0 w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold">3</span>
+                <h3 class="text-2xl font-bold mb-2">活動を広める（イベント・YouTube）</h3>
+                <p class="text-gray-600 mb-4">
+                    プロフィールができたら、実際の活動内容を見てもらいましょう！
+                </p>
+                
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="p-5 bg-white border border-purple-100 rounded-xl shadow-sm">
+                        <div class="text-2xl mb-2">📅</div>
+                        <h4 class="font-bold text-purple-800">イベント登録</h4>
+                        <p class="text-sm text-gray-600">ライブや配信の予定を登録。サイト上にあなたのライブスケジュール(または配信予定)が表示されます。</p>
+                    </div>
+                    <div class="p-5 bg-white border border-purple-100 rounded-xl shadow-sm">
+                        <div class="text-2xl mb-2">🎬</div>
+                        <h4 class="font-bold text-purple-800">YouTube連携</h4>
+                        <p class="text-sm text-gray-600">URLを貼るだけで、あなたのページに動画が埋め込まれます。</p>
                     </div>
                 </div>
+            </div>
 
-                {{-- ステップ3: コンテンツ登録 --}}
-                <div class="bg-white shadow-lg rounded-lg p-6 border-l-4 border-purple-500">
-                    <div class="flex items-start">
-                        <div class="ml-6">
-                            <div class="flex items-center mb-3">
-                                <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                                    3
-                                </div>
-                                <h3 class="text-xl font-bold ml-6">イベント・動画の登録</h3>
-                            </div>
-                            <p class="text-gray-600 mb-4">
-                                アーティスト登録が完了したら、イベント情報や動画コンテンツを登録しましょう。
-                            </p>
+        </div>
 
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <div class="bg-purple-50 p-4 rounded">
-                                    <h4 class="font-bold text-purple-800 mb-2">🎪 イベント登録</h4>
-                                    <p class="text-purple-700 text-sm mb-2">ライブ、展示会、ワークショップなどのイベント情報を登録できます。</p>
-                                    <p class="text-xs text-gray-600">📍 ダッシュボード → アーティスト → 「イベントを登録」</p>
-                                </div>
-
-                                <div class="bg-purple-50 p-4 rounded">
-                                    <h4 class="font-bold text-purple-800 mb-2">🎬 動画登録</h4>
-                                    <p class="text-purple-700 text-sm mb-2">YouTube動画を埋め込んで作品を紹介できます。</p>
-                                    <p class="text-xs text-gray-600">📍 ダッシュボード → アーティスト → 「YouTube動画を登録」</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        {{-- 困ったときは --}}
+        <div class="bg-gray-800 text-white p-8 rounded-2xl mb-12">
+            <h3 class="text-xl font-bold mb-4 flex items-center">
+                <span class="text-yellow-400 mr-2">❓</span> 困ったときは
+            </h3>
+            <div class="space-y-4 text-gray-300">
+                <div>
+                    <p class="font-bold text-white">Q. DM機能が見当たりません</p>
+                    <p class="text-sm">A. 現在、直接メッセージ機能は一時停止しております。SNS等のリンクをご活用ください。</p>
+                </div>
+                <div>
+                    <p class="font-bold text-white">Q. 登録した情報はいつ反映されますか？</p>
+                    <p class="text-sm">A. 公開ボタンを押した瞬間、即座にサイトへ反映されます。</p>
                 </div>
             </div>
         </div>
 
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
-            <h3 class="text-lg font-bold text-yellow-800 mb-3">💡 ポイント</h3>
-            <ul class="text-yellow-700 space-y-2">
-                {{-- <li>• 登録したアーティスト情報は管理者承認後に公開されます</li> --}}
-                {{-- <li>• 承認済みのアーティストはホームページで検索・閲覧できるようになります</li> --}}
-                <li>• 各アーティストごとにイベント・動画を個別に管理できます</li>
-                <li>• プロフィール情報はいつでも編集可能です</li>
-            </ul>
-        </div>
-
         <div class="text-center">
-            <a href="{{ route('register') }}"
-               class="inline-block bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 rounded-lg font-semibold text-lg shadow-lg">
-               今すぐ始める →
-            </a>
+            @guest
+                <a href="{{ route('register') }}"
+                   class="inline-block bg-pink-500 hover:bg-pink-600 text-white px-10 py-4 rounded-full font-bold text-xl shadow-lg transform hover:scale-105 transition duration-200">
+                   無料で今すぐ登録する
+                </a>
+            @else
+                <a href="{{ route('dashboard') }}"
+                   class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-10 py-4 rounded-full font-bold text-xl shadow-lg transform hover:scale-105 transition duration-200">
+                   マイページへ戻る
+                </a>
+            @endguest
         </div>
 
     </div>
-</x-app-layout></contents>
-</xai:function_call name="write">
-<parameter name="file_path">resources/views/help.blade.php
+</x-app-layout>

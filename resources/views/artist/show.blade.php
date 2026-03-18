@@ -1,11 +1,35 @@
+@section('title', $artist->name . ' | ソロアーティストマップ')
+
+@section('meta')
+    <meta property="og:title" content="{{ $artist->name }} - ソロアーティストマップ">
+    <meta property="og:description" content="{{ Str::limit(strip_tags($artist->profile), 100) }}">
+    <meta property="og:image" content="{{ $artist->main_photo ? asset('storage/' . $artist->main_photo) : asset('ogp-main.png') }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $artist->name }}">
+    <meta name="twitter:image" content="{{ $artist->main_photo ? asset('storage/' . $artist->main_photo) : asset('ogp-main.png') }}">
+@endsection
 <x-app-layout>
+   
     <div class="max-w-4xl mx-auto px-6 py-10">
 
-        {{-- 戻るボタン --}}
-        <div class="mb-4">
+        {{-- 戻るボタンとシェアボタンの並び --}}
+        <div class="flex justify-between items-center mb-4">
             <a href="{{ route('home') }}"
-               class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow">
+               class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow text-sm">
                ← 一覧に戻る
+            </a>
+
+            {{-- X シェアボタン --}}
+            @php
+                $shareText = urlencode("【ソロアーティストマップ】\nアーティスト：{$artist->name}\n地域：" . (is_array($artist->prefecture) ? implode('・', $artist->prefecture) : $artist->prefecture) . "\n");
+                $shareUrl = urlencode(Request::url());
+            @endphp
+            <a href="https://twitter.com/intent/tweet?text={{ $shareText }}&url={{ $shareUrl }}&hashtags=ソロアーティストマップ"
+               target="_blank"
+               rel="nofollow noopener"
+               class="bg-black hover:opacity-80 text-white px-4 py-2 rounded-full flex items-center shadow transition">
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                <span class="text-xs font-bold">Xでシェア</span>
             </a>
         </div>
 
@@ -41,9 +65,43 @@
 
         {{-- プロフィール情報 --}}
         <div class="space-y-4 bg-white p-6 rounded-lg shadow">
-            <p><strong>活動地域：</strong>{{ $artist->prefecture }}</p>
-            <p><strong>ジャンル：</strong>{{ $artist->genre }}</p>
-            <p><strong>プロフィール：</strong><br>{!! nl2br(e($artist->profile)) !!}</p>
+            <p class="flex items-center flex-wrap gap-2">
+                <strong>活動地域：</strong>
+                @if(is_array($artist->prefecture))
+                    @foreach($artist->prefecture as $p)
+                        <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                            {{ $p }}
+                        </span>
+                    @endforeach
+                @else
+                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                        {{ $artist->prefecture }}
+                    </span>
+                @endif
+            </p>
+            <p class="flex items-center flex-wrap gap-2">
+                <strong>ジャンル：</strong>
+                @if(is_array($artist->genre))
+                    @foreach($artist->genre as $g)
+                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                            {{ $g }}
+                        </span>
+                    @endforeach
+                @else
+                    {{-- 万が一、古いデータが文字列のまま残っていた場合のフォールバック --}}
+                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                        {{ $artist->genre }}
+                    </span>
+                @endif
+            </p>
+            {{-- <p><strong>プロフィール：</strong><br>{!! nl2br(e($artist->profile)) !!}</p> --}}
+            {{-- プロフィールセクション --}}
+            <p class="text-gray-700 leading-relaxed">
+                <strong>プロフィール：</strong><br>
+                <span class="mt-2 block">
+                    {!! linkify($artist->profile) !!}
+                </span>
+            </p>
 
             @if ($artist->official_website)
                 <p><strong>公式WEBサイト：</strong>
@@ -75,6 +133,22 @@
                     <p><strong>X(Twitter)：</strong>
                         <a href="{{ $artist->twitter_link }}" class="text-blue-600 underline" target="_blank">
                             {{ $artist->twitter_link }}
+                        </a>
+                    </p>
+                @endif
+
+                @if ($artist->instagram_link)
+                    <p><strong>Instagram：</strong>
+                        <a href="{{ $artist->instagram_link }}" class="text-pink-600 underline" target="_blank">
+                            {{ $artist->instagram_link }}
+                        </a>
+                    </p>
+                @endif
+
+                @if ($artist->tiktok_link)
+                    <p><strong>TikTok：</strong>
+                        <a href="{{ $artist->tiktok_link }}" class="text-black underline" target="_blank">
+                            {{ $artist->tiktok_link }}
                         </a>
                     </p>
                 @endif
