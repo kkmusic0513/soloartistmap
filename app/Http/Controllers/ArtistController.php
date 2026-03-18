@@ -124,7 +124,9 @@ class ArtistController extends Controller
 
     public function create()
     {
-        return view('artist.create');
+        return view('artist.create', [
+            'artist' => new \App\Models\Artist()
+        ]);
     }
 
     public function store(Request $request)

@@ -15,4 +15,4 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })->create()->usePublicPath('/home/web13c/best-web.net/public_html/solo');
