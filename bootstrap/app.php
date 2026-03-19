@@ -15,4 +15,4 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create()->usePublicPath(env('LARAVEL_PUBLIC_PATH', public_path()));
+    })->create();

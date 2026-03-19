@@ -257,7 +257,11 @@ class ArtistController extends Controller
         // dd($request->all()); 
 
         // Log::debug('Update called for artist id=' . $artist->id);
+        
+        
         $this->authorize('update', $artist);
+
+
         // Log::debug('Authorization passed');
 
 
@@ -298,6 +302,8 @@ class ArtistController extends Controller
                 'twitter_link' => 'nullable|url',
                 'instagram_link' => 'nullable|url',
                 'tiktok_link'    => 'nullable|url',
+                'delete_sub_photo_1' => 'nullable|boolean',
+                'delete_sub_photo_2' => 'nullable|boolean',
                 'is_public'    => 'nullable|boolean',
             ]);
             Log::debug('Validation passed', $validated);
@@ -316,6 +322,20 @@ class ArtistController extends Controller
 
         $artistDir = storage_path('app/public/artist_photos');
         if (!file_exists($artistDir)) mkdir($artistDir, 0755, true);
+
+
+        // 画像削除処理
+        foreach (['sub_photo_1', 'sub_photo_2'] as $field) {
+            if ($request->has("delete_$field")) {
+                $oldPath = $artist->getRawOriginal($field);
+                // XSERVERの物理パスを指定して削除
+                if ($oldPath && file_exists(storage_path('app/public/' . $oldPath))) {
+                    unlink(storage_path('app/public/' . $oldPath));
+                }
+                // DB上のパスをクリア
+                $artist->$field = null;
+            }
+        }
 
         // ★画像差し替え処理
         foreach (['main_photo', 'sub_photo_1', 'sub_photo_2'] as $photoField) {

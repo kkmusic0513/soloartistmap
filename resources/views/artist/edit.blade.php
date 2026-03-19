@@ -12,25 +12,53 @@
             <x-text-input name="name" value="{{ old('name', $artist->name) }}" class="w-full mb-4" />
 
             {{-- ★ メイン画像 --}}
-            <x-input-label value="メイン画像（現在の画像）" />
-            @if ($artist->main_photo)
-                <img src="{{ asset('storage/' . $artist->main_photo) }}" class="w-48 mb-2 rounded shadow">
-            @endif
-            <input type="file" name="main_photo" accept="image/*" class="mb-4">
+            <div class="mt-4 p-4 border rounded bg-gray-50">
+                <label class="block font-medium mb-2">メイン画像（現在の画像）</label>
+                <x-input-label value="" />
+                @if ($artist->main_photo)
+                    <img class="mb-2" src="{{ asset('storage/' . $artist->main_photo) }}" class="w-48 mb-2 rounded shadow">
+                @endif
+                <input type="file" name="main_photo" accept="image/*" class="mb-4">
+            </div>
 
             {{-- ★ サブ画像1 --}}
-            <x-input-label value="サブ画像 1（現在の画像）" />
-            @if ($artist->sub_photo_1)
-                <img src="{{ asset('storage/' . $artist->sub_photo_1) }}" class="w-48 mb-2 rounded shadow">
-            @endif
-            <input type="file" name="sub_photo_1" accept="image/*" class="mb-4">
+            <div class="mt-4 p-4 border rounded bg-gray-50">
+                <label class="block font-medium mb-2">サブ画像 1（現在の画像）</label>
+                
+                @if($artist->sub_photo_1)
+                    <div class="mb-2 items-center space-x-4">
+                        <img class="mb-2" src="{{ asset('storage/' . $artist->sub_photo_1) }}" class="w-32 h-32 object-cover rounded shadow">
+                        <label class="flex items-center text-red-600 cursor-pointer">
+                            <input type="checkbox" name="delete_sub_photo_1" value="1" class="mr-2">
+                            この画像を削除する
+                        </label>
+                    </div>
+                @endif
+                
+                <input type="file" name="sub_photo_1" accept="image/*" class="w-full border rounded px-3 py-2">
+                <p class="text-xs text-gray-500 mt-1">新しく選択すると画像が差し替わります</p>
+            </div>
 
-            {{-- ★ サブ画像2 --}}
-            <x-input-label value="サブ画像 2（現在の画像）" />
-            @if ($artist->sub_photo_2)
-                <img src="{{ asset('storage/' . $artist->sub_photo_2) }}" class="w-48 mb-2 rounded shadow">
-            @endif
-            <input type="file" name="sub_photo_2" accept="image/*" class="mb-4">
+            {{-- ★ サブ画像 2 --}}
+            <div class="mt-4 p-4 border rounded bg-gray-50">
+                <label class="block font-medium mb-2">サブ画像 2（現在の画像）</label>
+                
+                @if($artist->sub_photo_2)
+                    <div class="mb-2 flex items-center space-x-4">
+                        {{-- 分離構成のため asset() は /solo/storage/... を指すようになります --}}
+                        <img class="mb-2" src="{{ asset('storage/' . $artist->sub_photo_2) }}" class="w-32 h-32 object-cover rounded shadow">
+                        
+                        <label class="flex items-center text-red-600 cursor-pointer">
+                            {{-- Controller側で判別するためのチェックボックス --}}
+                            <input type="checkbox" name="delete_sub_photo_2" value="1" class="mr-2">
+                            この画像を削除する
+                        </label>
+                    </div>
+                @endif
+                
+                <input type="file" name="sub_photo_2" accept="image/*" class="w-full border rounded px-3 py-2">
+                <p class="text-xs text-gray-500 mt-1">新しく選択すると画像が差し替わります</p>
+            </div>
 
             {{-- 活動地域（複数選択可） --}}
             <div class="mb-6">
@@ -90,13 +118,22 @@
             </div>
 
             {{-- プロフィール --}}
-            <x-input-label value="プロフィール" />
-            <textarea name="profile" class="w-full mb-4">{{ old('profile', $artist->profile) }}</textarea>
+            <div class="mt-4">
+                <x-input-label value="プロフィール" />
+                <textarea 
+                    name="profile" 
+                    rows="8" 
+                    class="w-full mt-1 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    placeholder="アーティストとしての想いや、活動内容を詳しく入力してください。"
+                >{{ old('profile', $artist->profile) }}</textarea>
+                <p class="text-sm text-gray-600 mt-1">1000文字以内</p>
+            </div>
 
             <div>
                 <label class="block font-medium mb-1">公式WEBサイト</label>
                 <input type="url" name="official_website" 
-                    value="{{ old('official_website', $artist->official_website) }}"
+                    value="{{ old('official_website', $artist->official_website) }}" 
+                    placeholder="https://..." 
                     class="w-full border rounded px-3 py-2">
             </div>
 
@@ -104,19 +141,15 @@
             <div>
                 <label class="block font-medium mb-1">YouTubeリンク</label>
                 <input type="url" name="youtube_link" 
-                    value="{{ old('youtube_link', $artist->youtube_link) }}"
-                    class="w-full border rounded px-3 py-2">
-            </div>
-            <div>
-                <label class="block font-medium mb-1">SoundCloudリンク</label>
-                <input type="url" name="soundcloud_link" 
-                    value="{{ old('soundcloud_link', $artist->soundcloud_link) }}"
+                    value="{{ old('youtube_link', $artist->youtube_link) }}" 
+                    placeholder="https://www.youtube.com/@..."
                     class="w-full border rounded px-3 py-2">
             </div>
             <div>
                 <label class="block font-medium mb-1">X(Twitter)リンク</label>
                 <input type="url" name="twitter_link"
-                    value="{{ old('twitter_link', $artist->twitter_link) }}"
+                    value="{{ old('twitter_link', $artist->twitter_link) }}" 
+                    placeholder="https://x.com/..."
                     class="w-full border rounded px-3 py-2">
             </div>
             <div>
@@ -129,6 +162,13 @@
                 <label class="block font-medium mb-1">TikTokリンク</label>
                 <input type="url" name="tiktok_link" value="{{ old('tiktok_link', $artist->tiktok_link ?? '') }}"
                     placeholder="https://www.tiktok.com/@..."
+                    class="w-full border rounded px-3 py-2">
+            </div>
+            <div>
+                <label class="block font-medium mb-1">SoundCloudリンク</label>
+                <input type="url" name="soundcloud_link" 
+                    value="{{ old('soundcloud_link', $artist->soundcloud_link) }}" 
+                    placeholder="https://soundcloud.com/..."
                     class="w-full border rounded px-3 py-2">
             </div>
 

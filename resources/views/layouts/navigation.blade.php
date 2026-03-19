@@ -1,4 +1,4 @@
-<nav class="bg-white border-b border-gray-200">
+<nav class="bg-[#252525] border-b border-gray-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="py-4 lg:py-6">
 
@@ -7,7 +7,7 @@
 
                 <!-- 左側: サイトタイトルと使い方ガイド -->
                 <div class="flex flex-col sm:flex-row items-center sm:items-start space-y-2 sm:space-y-0 sm:space-x-6">
-                    <a href="{{ route('home') }}" class="text-lg lg:text-xl font-bold text-gray-800">
+                    <a href="{{ route('home') }}" class="text-white text-lg lg:text-xl font-bold text-gray-800">
                         {{ config('app.name', '全国ソロアーティストマップ') }}
                     </a>
                     <a href="{{ route('help') }}" class="bg-indigo-500 hover:bg-indigo-600 text-white text-xs lg:text-sm font-semibold px-2 py-1 lg:px-3 lg:py-1 rounded shadow whitespace-nowrap">
@@ -20,7 +20,7 @@
                     @auth
                         <!-- ログイン時 -->
                         <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
-                            <span class="text-gray-700 font-medium text-center sm:text-left">
+                            <span class="text-white font-medium text-center sm:text-left">
                                 ようこそ、{{ Auth::user()->name }}さん
                             </span>
                             <div class="flex space-x-3">

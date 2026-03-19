@@ -96,31 +96,35 @@
                 </div>
 
                 {{-- プロフィール --}}
-                <div>
-                    <label class="block font-medium mb-1">プロフィール</label>
-                    <textarea name="profile" rows="4"
-                        class="w-full border rounded px-3 py-2"></textarea>
+                <div class="mt-4">
+                    <x-input-label value="プロフィール" />
+                    <textarea 
+                        name="profile" 
+                        rows="8" 
+                        class="w-full mt-1 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        placeholder="アーティストとしての想いや、活動内容を詳しく入力してください。"
+                    >{{ old('profile', $artist->profile) }}</textarea>
                     <p class="text-sm text-gray-600 mt-1">1000文字以内</p>
                 </div>
 
                 <div>
                     <label class="block font-medium mb-1">公式WEBサイト</label>
-                    <input type="url" name="official_website" class="w-full border rounded px-3 py-2">
+                    <input type="url" name="official_website" 
+                        placeholder="https://..." 
+                        class="w-full border rounded px-3 py-2">
                 </div>
 
                 {{-- SNS --}}
                 <div>
                     <label class="block font-medium mb-1">YouTubeリンク</label>
-                    <input type="url" name="youtube_link" class="w-full border rounded px-3 py-2">
-                </div>
-                <div>
-                    <label class="block font-medium mb-1">SoundCloudリンク</label>
-                    <input type="url" name="soundcloud_link" value="{{ old('soundcloud_link') }}"
+                    <input type="url" name="youtube_link" 
+                        placeholder="https://www.youtube.com/@..."
                         class="w-full border rounded px-3 py-2">
                 </div>
                 <div>
                     <label class="block font-medium mb-1">X(Twitter)リンク</label>
-                    <input type="url" name="twitter_link" value="{{ old('twitter_link') }}"
+                    <input type="url" name="twitter_link" value="{{ old('twitter_link') }}" 
+                        placeholder="https://x.com/..."
                         class="w-full border rounded px-3 py-2">
                 </div>
                 <div>
@@ -133,6 +137,12 @@
                     <label class="block font-medium mb-1">TikTokリンク</label>
                     <input type="url" name="tiktok_link" value="{{ old('tiktok_link', $artist->tiktok_link ?? '') }}"
                         placeholder="https://www.tiktok.com/@..."
+                        class="w-full border rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block font-medium mb-1">SoundCloudリンク</label>
+                    <input type="url" name="soundcloud_link" value="{{ old('soundcloud_link') }}" 
+                        placeholder="https://soundcloud.com/..."
                         class="w-full border rounded px-3 py-2">
                 </div>
 
