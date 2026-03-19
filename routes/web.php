@@ -76,11 +76,20 @@ Route::middleware('auth')->group(function () {
 
 });
 
-
-
 // --- 開発用リンク確認ページ ---
 Route::get('/dev-links', function () {
     return view('dev-links');
 })->name('dev.links');
+
+
+Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::get('/artists', [AdminArtistController::class, 'index'])->name('admin.artists.index');
+    Route::post('/artists/{id}/approve', [AdminArtistController::class, 'approve'])->name('admin.artists.approve');
+    Route::post('/artists/{id}/disapprove', [AdminArtistController::class, 'disapprove'])->name('admin.artists.disapprove');
+    
+    // ★ここを正確に追記してください
+    Route::post('/artists/{id}/toggle-pickup', [AdminArtistController::class, 'togglePickup'])
+        ->name('admin.artists.toggle-pickup');
+});
 
 require __DIR__.'/auth.php';

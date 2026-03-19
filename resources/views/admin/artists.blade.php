@@ -34,7 +34,9 @@
                             <td class="border p-2">{{ $artist->id }}</td>
                             <td class="border p-2">{{ $artist->name }}</td>
                             <td class="border p-2">{{ $artist->prefecture ?? '-' }}</td>
-                            <td class="border p-2">{{ $artist->genre ?? '-' }}</td>
+                            <td class="border p-2">
+                                {{ is_array($artist->genre) ? implode(', ', $artist->genre) : ($artist->genre ?? '-') }}
+                            </td>
                             <td class="border p-2 text-sm">{{ $artist->profile ? Str::limit($artist->profile, 50) : '-' }}</td>
                             <td class="border p-2">
                                 @if($artist->official_website)
@@ -83,8 +85,12 @@
                             <td class="border p-2">{{ $artist->id }}</td>
                             <td class="border p-2">{{ $artist->user->name ?? '-' }}</td>
                             <td class="border p-2">{{ $artist->name }}</td>
-                            <td class="border p-2">{{ $artist->prefecture ?? '-' }}</td>
-                            <td class="border p-2">{{ $artist->genre ?? '-' }}</td>
+                            <td class="border p-2">
+                                {{ is_array($artist->prefecture) ? implode(', ', $artist->prefecture) : ($artist->prefecture ?? '-') }}
+                            </td>
+                            <td class="border p-2">
+                                {{ is_array($artist->genre) ? implode(', ', $artist->genre) : ($artist->genre ?? '-') }}
+                            </td>
                             <td class="border p-2 text-sm">{{ $artist->profile ? Str::limit($artist->profile, 50) : '-' }}</td>
                             <td class="border p-2">
                                 @if($artist->official_website)
@@ -100,6 +106,14 @@
                                     @csrf
                                     <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
                                         未承認に戻す
+                                    </button>
+                                </form>
+                                <br>
+                                {{-- ピックアップ切り替えボタン --}}
+                                <form action="{{ route('admin.artists.toggle-pickup', $artist->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="{{ $artist->is_pickup ? 'bg-yellow-500' : 'bg-red-500' }}  hover:bg-red-600 text-white px-3 py-1 rounded">
+                                        {{ $artist->is_pickup ? '★ ピックアップ中' : 'ピックアップする' }}
                                     </button>
                                 </form>
                             </td>

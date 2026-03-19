@@ -36,7 +36,13 @@ class ArtistController extends Controller
 
         // --- 2. ピックアップアーティスト（ベースから1件ランダム） ---
         // 変数未定義エラーを防ぐため、ここで確実に取得
-        $pickupArtist = (clone $baseQuery)->inRandomOrder()->first();
+        // 1. まずピックアップフラグが立っている人を探す
+        $pickupArtist = (clone $baseQuery)->where('is_pickup', true)->first();
+
+        // 2. もし誰も選ばれていなければ、ランダムで1人出す（保険）
+        if (!$pickupArtist) {
+            $pickupArtist = (clone $baseQuery)->inRandomOrder()->first();
+        }
 
         // --- 3. メインの検索一覧用 ---
         $query = (clone $baseQuery);
@@ -385,6 +391,7 @@ class ArtistController extends Controller
 
     public function show(Artist $artist)
     {
+
         // アーティストに関連する動画を取得
         $videos = $artist->videos()->orderBy('created_at', 'desc')->get();
 
@@ -404,5 +411,4 @@ class ArtistController extends Controller
 
         return view('artist.show', compact('artist', 'videos'));
     }
-
 }

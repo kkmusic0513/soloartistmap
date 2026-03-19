@@ -54,4 +54,28 @@ class AdminArtistController extends Controller
         return redirect()->route('admin.artists.index')
             ->with('success', "{$artist->name} さんを未承認に戻しました。");
     }
+    /**
+     * アーティストのピックアップ状態を切り替える
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function togglePickup($id)
+    {
+        // XSERVER環境での実行時間を考慮し、念のためfindOrFailを使用
+        $artist = Artist::findOrFail($id);
+
+        // 仕様：ピックアップは1サイトにつき1名（あるいは少数）を想定
+        // もし「常に1人だけ」をピックアップしたい場合は以下のコメントアウトを解除してください
+        // Artist::where('id', '!=', $id)->update(['is_pickup' => false]);
+
+        // フラグを反転
+        $artist->is_pickup = !$artist->is_pickup;
+        $artist->save();
+
+        $status = $artist->is_pickup ? 'ピックアップに設定しました' : 'ピックアップを解除しました';
+
+        return redirect()->route('admin.artists.index')
+            ->with('success', "{$artist->name} さんを{$status}。");
+    }
 }
