@@ -115,7 +115,7 @@
                 </div>
 
                 {{-- インジケーター --}}
-                <div class="flex justify-center mt-4 space-x-3">
+                <div class="flex justify-center mt-4 space-x-3 mb-4">
                     <template x-for="i in total">
                         <button
                             @click="goToSlide(i - 1)"
@@ -123,6 +123,18 @@
                             :class="currentIndex === (i - 1) ? 'bg-white scale-125' : 'bg-white bg-opacity-50'"
                         ></button>
                     </template>
+                </div>
+
+                <div class="bg-[#252525] mb-10 p-8 rounded-2xl shadow-xl text-white">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        全国ソロアーティストマップへようこそ！
+                    </h2>
+                    <p class="text-lg leading-relaxed opacity-90">
+                        ここは、一人で活動する表現者たちが主役のプラットフォームです。<br>
+                        「自分のホームページを持つのは大変だけど、ライブ情報や動画をまとめておきたい」<br>
+                        そんなアーティストの願いを一箇所で叶えます。<br>
+                        現在は、「一人で」活動している方のみの登録をお願いします。
+                    </p>
                 </div>
             </div>
         </div>
@@ -426,7 +438,7 @@
 
     </div>
 
-    <section class="relative bg-[#f9fafb] py-12 [box-shadow:0_0_0_100vmax_#2d2d2d] [clip-path:inset(0_-100vmax)]">
+    <section class="relative bg-[#e5e7eb] py-12 [box-shadow:0_0_0_100vmax_#2d2d2d] [clip-path:inset(0_-100vmax)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <h2 class="text-xl font-bold border-l-4 border-blue-500 pl-4 mb-4">最新イベント（登録日順）</h2>
