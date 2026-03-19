@@ -31,54 +31,54 @@ class ArtistController extends Controller
         $prefecture = $request->query('prefecture');
         $genre = $request->query('genre');
 
-        $query = Artist::where('is_approved', true)->where('is_public', true);
+        // --- 1. ベースクエリを定義（承認済み且つ公開中） ---
+        $baseQuery = Artist::where('is_approved', true)->where('is_public', true);
 
-        // 都道府県で絞り込み（指定があれば）
+        // --- 2. ピックアップアーティスト（ベースから1件ランダム） ---
+        // 変数未定義エラーを防ぐため、ここで確実に取得
+        $pickupArtist = (clone $baseQuery)->inRandomOrder()->first();
+
+        // --- 3. メインの検索一覧用 ---
+        $query = (clone $baseQuery);
+
+        // 都道府県で絞り込み
         if (!empty($prefecture)) {
-            // ["東京都","神奈川県"] のような文字列の中に "東京都" が含まれているか
             $query->where('prefecture', 'like', '%' . $prefecture . '%');
         }
 
-        // ジャンルで絞り込み（JSON配列の中身を検索）
+        // ジャンルで絞り込み
         if (!empty($genre)) {
             $query->where(function($q) use ($genre) {
-                // 1. 通常のJSON検索（念のため残す）
                 $q->whereJsonContains('genre', $genre)
-                // 2. 文字列として曖昧検索（["J-POP","ロック"] という文字列の中に "ロック" があるか）
-                // これなら Unicode エスケープの状態に関わらずヒットします
-                ->orWhere('genre', 'like', '%' . $genre . '%');
+                  ->orWhere('genre', 'like', '%' . $genre . '%');
             });
         }
 
-        // 並びは新着順（必要なら変更）
+        // --- 4. 各種データの取得 ---
         $artists = $query->orderBy('created_at', 'desc')->paginate(20)->withQueryString();
+        
+        $latestArtists = (clone $baseQuery)->latest()->take(12)->get();
 
-        //新着アーティスト用(12アーティスト)
-        $latestArtists = Artist::latest()->take(12)->get();
-
-        //新着動画(10個)
         $latestVideos = ArtistVideo::with('artist')
-            ->whereHas('artist', function($query) {
-                $query->where('is_approved', true)->where('is_public', true);
+            ->whereHas('artist', function($q) {
+                $q->where('is_approved', true)->where('is_public', true);
             })
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
 
-        //最新イベント(現在の日付に近い順)
         $upcomingEvents = Event::with('artist')
-            ->whereHas('artist', function($query) {
-                $query->where('is_approved', true)->where('is_public', true);
+            ->whereHas('artist', function($q) {
+                $q->where('is_approved', true)->where('is_public', true);
             })
             ->where('start_at', '>=', now())
             ->orderBy('start_at', 'asc')
             ->take(10)
             ->get();
 
-        //最新イベント(登録された日付が新しい順)
         $recentEvents = Event::with('artist')
-            ->whereHas('artist', function($query) {
-                $query->where('is_approved', true)->where('is_public', true);
+            ->whereHas('artist', function($q) {
+                $q->where('is_approved', true)->where('is_public', true);
             })
             ->orderBy('created_at', 'desc')
             ->take(10)
@@ -86,6 +86,7 @@ class ArtistController extends Controller
 
         return view('home', [
             'artists' => $artists,
+            'pickupArtist' => $pickupArtist, // 追加
             'latestArtists' => $latestArtists,
             'latestVideos' => $latestVideos,
             'upcomingEvents' => $upcomingEvents,
