@@ -78,8 +78,14 @@ Route::middleware('auth')->group(function () {
 
 // --- 開発用リンク確認ページ ---
 Route::get('/dev-links', function () {
-    return view('dev-links');
-})->name('dev.links');
+    // ログイン済み かつ roleがadmin でない場合は403エラー
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403, '管理者権限が必要です。');
+    }
+    
+    // 公開ディレクトリのURLを表示するだけの簡易ページ、またはリダイレクトなど
+    return view('dev-links'); 
+})->middleware('auth');
 
 
 Route::prefix('admin')->middleware('auth')->group(function () {

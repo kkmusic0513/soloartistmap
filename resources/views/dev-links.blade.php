@@ -51,12 +51,6 @@
     <section>
         <h2>👤 一般ユーザー用</h2>
         <a href="{{ route('artist.create') }}">アーティスト登録フォーム</a>
-        <a href="{{ route('home') }}">承認済みアーティスト一覧</a>
-    </section>
-
-    <section>
-        <h2>⚙️ システム</h2>
-        <a href="{{ route('dev.links') }}">このページ（/dev-links）</a>
     </section>
 
 </body>

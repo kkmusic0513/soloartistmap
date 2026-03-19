@@ -24,6 +24,13 @@
                                 ようこそ、{{ Auth::user()->name }}さん
                             </span>
                             <div class="flex space-x-3">
+                                {{-- ★ 管理者判定を追加 --}}
+                                @if(Auth::check() && Auth::user()->role === 'admin')
+                                    <a href="/dev-links"
+                                    class="bg-gray-700 hover:bg-gray-800 text-white font-semibold px-3 py-2 lg:px-4 lg:py-2 rounded-lg shadow text-sm lg:text-base border border-gray-500 flex items-center">
+                                        <span class="mr-1">🛠</span> 開発リンク
+                                    </a>
+                                @endif
                                 <a href="{{ route('dashboard') }}"
                                     class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-3 py-2 lg:px-4 lg:py-2 rounded-lg shadow text-sm lg:text-base">
                                     ダッシュボード
