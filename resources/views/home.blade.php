@@ -643,4 +643,51 @@
             @endif
         </div>
     </section>
+
+    {{-- ★ バグ報告・改善リクエスト（ド派手バージョン） --}}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="relative group">
+            {{-- 背景のネオン・グロー効果 --}}
+            <div class="absolute -inset-1 bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 rounded-3xl blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+            
+            {{-- コンテンツ本体 --}}
+            <div class="relative bg-white border-2 border-dashed border-gray-200 p-8 rounded-3xl shadow-2xl overflow-hidden">
+                
+                {{-- 背景のアートワーク --}}
+                <div class="absolute right-0 bottom-0 opacity-5 transform translate-x-1/4 translate-y-1/4 scale-150">
+                    <svg class="w-64 h-64 text-purple-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 items-center relative z-10">
+                    
+                    {{-- 左側：メッセージ --}}
+                    <div class="md:col-span-2">
+                        <h3 class="text-3xl font-black mb-4 flex items-center bg-gradient-to-r from-pink-500 to-violet-600 bg-clip-text text-transparent">
+                            <span class="mr-3 text-4xl">🛠</span> あなたの「声」が地図を広げる
+                        </h3>
+                        <p class="text-gray-700 mb-2 leading-relaxed text-lg font-medium">
+                            「全国ソロアーティストマップ」は現在<strong class="text-purple-600">β版</strong>として爆速開発中です。<br>
+                            表示の崩れ、使いにくい点、そして「こんな機能が欲しい！」という熱いアイデアがあれば、ぜひ管理人までお気軽にお寄せください。
+                        </p>
+                        <p class="text-sm text-gray-500">※あなたのアイデアが、次のアップデートで実装されるかも！</p>
+                    </div>
+
+                    {{-- 右側：巨大アクションボタン --}}
+                    <div class="text-center">
+                        <a href="https://x.com/kk_jazzmaster" target="_blank" 
+                        class="inline-flex flex-col items-center justify-center bg-black hover:bg-gray-800 text-white p-8 rounded-full shadow-2xl transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 w-48 h-48 border-4 border-white ring-8 ring-black ring-opacity-10 group">
+                            
+                            {{-- Xアイコン（最新のロゴに合わせた黒背景白文字風に調整） --}}
+                            <svg class="w-16 h-16 mb-2 fill-current text-white group-hover:text-blue-400 transition" viewBox="0 0 24 24">
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+                            </svg>
+                            
+                            <span class="font-black text-xl tracking-tight">管理人に連絡</span>
+                            <span class="text-xs opacity-70">(@kk_jazzmaster)</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </x-app-layout>
