@@ -148,39 +148,18 @@ class ArtistController extends Controller
     {
         // デバッグ: リクエスト情報をログに記録
         \Log::info('Artist store request', [
-            'method' => $request->method(),
-            'has_files' => $request->hasFile('main_photo'),
-            'user_agent' => $request->userAgent(),
             'all_data' => $request->all()
         ]);
 
         // バリデーション
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'main_photo' => [
-                'required',
-                'image',
-                'mimes:jpeg,png,jpg,gif,webp',
-                'max:10240', // 10MB
-                'dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
-            ],
-            'sub_photo_1' => [
-                'nullable',
-                'image',
-                'mimes:jpeg,png,jpg,gif,webp',
-                'max:10240', // 10MB
-                'dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
-            ],
-            'sub_photo_2' => [
-                'nullable',
-                'image',
-                'mimes:jpeg,png,jpg,gif,webp',
-                'max:10240', // 10MB
-                'dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
-            ],
-            'prefecture' => 'required|array', // arrayに変更
+            'main_photo' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240|dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
+            'sub_photo_1' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240|dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
+            'sub_photo_2' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240|dimensions:min_width=100,min_height=100,max_width=8000,max_height=8000',
+            'prefecture' => 'required|array',
             'prefecture.*' => 'string',
-            'genre' => 'nullable|array', // string ではなく array に変更
+            'genre' => 'nullable|array',
             'genre.*' => 'string|max:255',
             'profile' => 'nullable|string|max:1000',
             'official_website' => 'nullable|url|max:255',
@@ -189,80 +168,48 @@ class ArtistController extends Controller
             'twitter_link' => 'nullable|url|max:255',
             'instagram_link' => 'nullable|url',
             'tiktok_link'    => 'nullable|url',
-        ], [
-            'main_photo.image' => 'メイン画像は画像ファイルを選択してください。',
-            'main_photo.mimes' => 'メイン画像はJPEG、PNG、GIF、WebP形式のみ対応しています。',
-            'main_photo.max' => 'メイン画像のサイズは10MB以下にしてください。',
-            'main_photo.dimensions' => 'メイン画像のサイズは幅100-8000px、高さ100-8000pxの範囲にしてください。',
-
-            'sub_photo_1.image' => 'サブ画像1は画像ファイルを選択してください。',
-            'sub_photo_1.mimes' => 'サブ画像1はJPEG、PNG、GIF、WebP形式のみ対応しています。',
-            'sub_photo_1.max' => 'サブ画像1のサイズは10MB以下にしてください。',
-            'sub_photo_1.dimensions' => 'サブ画像1のサイズは幅100-8000px、高さ100-8000pxの範囲にしてください。',
-
-            'sub_photo_2.image' => 'サブ画像2は画像ファイルを選択してください。',
-            'sub_photo_2.mimes' => 'サブ画像2はJPEG、PNG、GIF、WebP形式のみ対応しています。',
-            'sub_photo_2.max' => 'サブ画像2のサイズは10MB以下にしてください。',
-            'sub_photo_2.dimensions' => 'サブ画像2のサイズは幅100-8000px、高さ100-8000pxの範囲にしてください。',
-
-            'name.required' => 'アーティスト名は必須です。',
-            'name.max' => 'アーティスト名は255文字以内で入力してください。',
-
-            'prefecture.required' => '活動地域は必須です。',
-
-            'profile.max' => 'プロフィールは1000文字以内で入力してください。',
-
-            'official_website.url' => '公式ウェブサイトは正しいURL形式で入力してください。',
-            'youtube_link.url' => 'YouTubeリンクは正しいURL形式で入力してください。',
-            'soundcloud_link.url' => 'SoundCloudリンクは正しいURL形式で入力してください。',
-            'twitter_link.url' => 'X(Twitter)リンクは正しいURL形式で入力してください。',
+            'is_public'      => 'nullable|boolean', // ← 追加
         ]);
 
-        // ジャンルが未選択の場合は空配列をセット
-        $validated['genre'] = $request->input('genre', []);
-        $validated['prefecture'] = $request->input('prefecture', []);
+        // 基本データの準備
+        $data = $validated;
+        $data['user_id'] = auth()->id();
+        // 公開フラグの判定（チェックボックスが空なら0、あれば1）
+        $data['is_public'] = $request->has('is_public') ? 1 : 0;
 
-        // user_id を追加
-        $validated['user_id'] = auth()->id();
-        \Log::info('Artist user_id set', ['user_id' => auth()->id()]);
+        // ====== 画像保存処理（WebP軽量化を適用） ======
+        $artistDir = 'artist_photos';
+        $storagePath = storage_path('app/public/' . $artistDir);
+        if (!file_exists($storagePath)) {
+            mkdir($storagePath, 0755, true);
+        }
 
-        // ====== 画像保存処理 ======
-        $paths = [];
         foreach (['main_photo', 'sub_photo_1', 'sub_photo_2'] as $photoField) {
             if ($request->hasFile($photoField)) {
-                \Log::info('Processing image', ['field' => $photoField]);
                 $file = $request->file($photoField);
-                \Log::info('File info', [
-                    'original_name' => $file->getClientOriginalName(),
-                    'mime_type' => $file->getMimeType(),
-                    'size' => $file->getSize(),
-                    'error' => $file->getError()
-                ]);
+                
+                // WebPとして保存するためのファイル名生成
+                $filename = time() . '_' . uniqid() . '.webp'; 
+                $savePath = $storagePath . '/' . $filename;
 
-                $paths[$photoField] = $file->store('artist_photos', 'public');
-                \Log::info('Image stored', ['field' => $photoField, 'path' => $paths[$photoField]]);
+                // Intervention Image で WebP 変換（横1200px / 画質70%）
+                Image::make($file)
+                    ->resize(1200, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    })
+                    ->encode('webp', 70) // jpg 60% より WebP 70% の方が綺麗で軽いです
+                    ->save($savePath);
+
+                $data[$photoField] = $artistDir . '/' . $filename;
             }
         }
 
         // DB作成
-        \Log::info('Creating artist in database', array_merge($validated, $paths));
-        $artist = Artist::create(array_merge($validated, $paths));
+        $artist = Artist::create($data);
         \Log::info('Artist created successfully', ['artist_id' => $artist->id]);
 
         return redirect()->route('dashboard')->with('success', 'アーティストの登録が完了しました！');
-    }
-
-
-    public function approvedList()
-    {
-        $artists = Artist::where('is_approved', true)->orderBy('created_at', 'desc')->get();
-        return view('artist.approved_list', compact('artists'));
-    }
-
-    public function edit(Artist $artist)
-    {
-        $this->authorize('update', $artist);
-        return view('artist.edit', compact('artist'));
     }
 
     public function update(Request $request, Artist $artist)
@@ -352,29 +299,28 @@ class ArtistController extends Controller
             }
         }
 
-        // ★画像差し替え処理
+        // ★画像差し替え処理（WebP変換版）
         foreach (['main_photo', 'sub_photo_1', 'sub_photo_2'] as $photoField) {
             if ($request->hasFile($photoField)) {
-                // 古い画像削除
+                // 古い画像削除（以前のJPGやPNGも消せるように currentPath で判定）
                 $oldPhoto = $artist->getRawOriginal($photoField);
                 if (!empty($oldPhoto) && file_exists(storage_path('app/public/' . $oldPhoto))) {
                     unlink(storage_path('app/public/' . $oldPhoto));
                 }
 
-                // 新しい画像を保存
+                // 新しい画像を WebP として保存
                 $file = $request->file($photoField);
-                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $path = $artistDir . '/' . $filename;
+                $filename = time() . '_' . uniqid() . '.webp'; // 拡張子を強制的に webp に
+                $path = $artistDir . '/' . $filename; // $artistDir は storage_path(...)
 
                 Image::make($file)
                     ->resize(1200, null, function ($constraint) {
                         $constraint->aspectRatio();
                         $constraint->upsize();
                     })
-                    ->encode('jpg', 60)
+                    ->encode('webp', 70) 
                     ->save($path);
 
-                // パスをバリデート配列にセット
                 $validated[$photoField] = 'artist_photos/' . $filename;
             }
         }
@@ -388,11 +334,40 @@ class ArtistController extends Controller
         return redirect()->route('dashboard')->with('success', 'アーティスト情報を更新しました。');
     }
 
+    public function approvedList()
+    {
+        $artists = Artist::where('is_approved', true)->orderBy('created_at', 'desc')->get();
+        return view('artist.approved_list', compact('artists'));
+    }
 
+    public function edit(Artist $artist)
+    {
+        $this->authorize('update', $artist);
+        return view('artist.edit', compact('artist'));
+    }
 
     public function destroy(Artist $artist)
     {
         $this->authorize('delete', $artist);
+
+        $files = [$artist->main_photo, $artist->sub_photo_1, $artist->sub_photo_2];
+
+        foreach ($files as $file) {
+            if (empty($file)) continue;
+
+            // 【デバッグ】実際に判定しているフルパスをログに出す
+            $fullPath = \Storage::disk('public')->path($file);
+            \Log::info("削除試行中のフルパス: " . $fullPath);
+
+            if (\Storage::disk('public')->exists($file)) {
+                \Storage::disk('public')->delete($file);
+                \Log::info("削除成功: " . $file);
+            } else {
+                // ここを通る場合、DBの文字列と実ファイルの場所がズレています
+                \Log::warning("ファイルが存在しません（判定失敗）: " . $file);
+            }
+        }
+
         $artist->delete();
         return redirect()->route('dashboard')->with('success', 'アーティストを削除しました。');
     }

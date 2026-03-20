@@ -146,6 +146,21 @@
                         class="w-full border rounded px-3 py-2">
                 </div>
 
+                {{-- 公開設定 --}}
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <label class="flex items-center cursor-pointer">
+                        {{-- 新規登録時はデフォルトで「公開(1)」にチェックを入れておく設定 --}}
+                        <input type="checkbox" name="is_public" value="1"
+                            {{ old('is_public', '1') == '1' ? 'checked' : '' }}
+                            class="mr-3 h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded">
+                        <span class="font-medium text-gray-900">このアーティストを公開する</span>
+                    </label>
+                    <p class="text-sm text-gray-600 mt-2">
+                        チェックを入れると、管理者の承認後、ホームページで検索・閲覧できるようになります。<br>
+                        チェックを外すと「非公開」となり、自分のダッシュボードでのみ管理できます。
+                    </p>
+                </div>
+
                 <div class="text-center">
                     <button class="bg-pink-500 text-white px-6 py-2 rounded shadow">
                         登録

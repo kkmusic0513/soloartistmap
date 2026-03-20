@@ -31,6 +31,7 @@ class Artist extends Model
         'genre' => 'array', 
         'prefecture' => 'array',
         'is_public' => 'boolean',
+        'is_approved' => 'boolean',
     ];
     /**
      * ジャンルを保存する際、Unicodeエスケープせずに保存する設定

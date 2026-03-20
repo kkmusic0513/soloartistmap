@@ -126,22 +126,23 @@ class EventController extends Controller
         // 不要なフィールドを削除
         unset($validated['start_date'], $validated['start_hour'], $validated['start_minute'], $validated['end_date'], $validated['end_hour'], $validated['end_minute']);
 
-        // 画像保存・圧縮処理
+        // ====== 画像保存・WebP変換処理 ======
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
-            $filename = time() . '_' . uniqid() . '.jpg'; // 拡張子は必ずjpgに
+            // 拡張子を webp に変更
+            $filename = time() . '_' . uniqid() . '.webp'; 
             $eventDir = storage_path('app/public/events');
             if (!file_exists($eventDir)) mkdir($eventDir, 0755, true);
 
             $path = $eventDir . '/' . $filename;
 
-            // 画像を圧縮して保存
+            // 画像を WebP に変換して保存（横1600px / 画質 75%）
             Image::make($file)
                 ->resize(1600, null, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 })
-                ->encode('jpg', 75) // 品質75%で保存
+                ->encode('webp', 75) // WebP 75% は JPG 85~90% 相当の綺麗さで軽いです
                 ->save($path);
 
             $validated['photo'] = 'events/' . $filename;
@@ -234,31 +235,32 @@ class EventController extends Controller
             // 不要なフィールドを削除
             unset($validated['start_date'], $validated['start_hour'], $validated['start_minute'], $validated['end_date'], $validated['end_hour'], $validated['end_minute']);
 
-        // 画像保存・圧縮処理
-        if ($request->hasFile('photo')) {
-            // 既存画像削除
-            if ($event->photo && file_exists(storage_path('app/public/' . $event->photo))) {
-                unlink(storage_path('app/public/' . $event->photo));
+            // ====== 画像差し替え・WebP変換処理 ======
+            if ($request->hasFile('photo')) {
+                // 既存画像の削除（古い拡張子でも削除できるように getRawOriginal を使用）
+                $oldPhoto = $event->getRawOriginal('photo');
+                if ($oldPhoto && file_exists(storage_path('app/public/' . $oldPhoto))) {
+                    unlink(storage_path('app/public/' . $oldPhoto));
+                }
+
+                $file = $request->file('photo');
+                $filename = time() . '_' . uniqid() . '.webp'; // 拡張子を webp に
+                $eventDir = storage_path('app/public/events');
+                if (!file_exists($eventDir)) mkdir($eventDir, 0755, true);
+
+                $path = $eventDir . '/' . $filename;
+
+                // 画像を WebP に変換して保存
+                Image::make($file)
+                    ->resize(1600, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    })
+                    ->encode('webp', 75)
+                    ->save($path);
+
+                $validated['photo'] = 'events/' . $filename;
             }
-
-            $file = $request->file('photo');
-            $filename = time() . '_' . uniqid() . '.jpg'; // 拡張子は必ずjpgに
-            $eventDir = storage_path('app/public/events');
-            if (!file_exists($eventDir)) mkdir($eventDir, 0755, true);
-
-            $path = $eventDir . '/' . $filename;
-
-            // 画像を圧縮して保存
-            Image::make($file)
-                ->resize(1600, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                })
-                ->encode('jpg', 75) // 品質75%で保存
-                ->save($path);
-
-            $validated['photo'] = 'events/' . $filename;
-        }
 
             $event->update($validated);
 
