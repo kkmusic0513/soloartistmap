@@ -16,7 +16,7 @@
                     "【ソロアーティストマップ：イベント情報】\n" .
                     "イベント：{$event->title}\n" .
                     "開催日：{$eventDate}\n" .
-                    "会場：{$event->venue}\n" .
+                    "会場：{$event->location}\n" .
                     "アーティスト：{$event->artist->name}\n"
                 );
                 $shareUrl = urlencode(Request::url());
