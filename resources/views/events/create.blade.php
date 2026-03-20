@@ -26,7 +26,7 @@
 
             <div>
                 <label class="block font-medium mb-1">詳細</label>
-                <textarea name="description" class="w-full border rounded px-3 py-2" rows="4">{{ old('description') }}</textarea>
+                <textarea name="description" class="w-full border rounded px-3 py-2" rows="8">{{ old('description') }}</textarea>
                 <p class="text-sm text-gray-600 mt-1">1000文字以内</p>
                 @error('description')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>

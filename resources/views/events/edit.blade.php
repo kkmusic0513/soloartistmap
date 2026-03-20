@@ -27,7 +27,7 @@
 
             <div>
                 <label class="block font-medium mb-1">詳細</label>
-                <textarea name="description" class="w-full border rounded px-3 py-2">{{ old('description', $event->description) }}</textarea>
+                <textarea name="description" class="w-full border rounded px-3 py-2" rows="8">{{ old('description', $event->description) }}</textarea>
                 @error('description')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror

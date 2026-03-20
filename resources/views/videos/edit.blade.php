@@ -18,12 +18,25 @@
                 <input type="text" name="youtube_url" value="{{ old('youtube_url', $video->youtube_url) }}" class="w-full border rounded p-2" required>
             </div>
 
-            <button class="bg-blue-600 text-white px-4 py-2 rounded mr-2">
-                更新する
-            </button>
-            <a href="{{ route('artists.videos.index', $artist) }}" class="bg-gray-500 text-white px-4 py-2 rounded">
-                キャンセル
-            </a>
+            <div class="flex items-center">
+                <button class="bg-blue-600 text-white px-4 py-2 rounded mr-2 hover:bg-blue-700 transition">
+                    更新する
+                </button>
+                
+                {{-- ★ ここを修正：index から create へ変更 --}}
+                @if ($errors->any())
+                    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                <a href="{{ route('artists.videos.create', $artist) }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
+                    キャンセル
+                </a>
+            </div>
         </form>
     </div>
 </x-app-layout>

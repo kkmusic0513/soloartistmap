@@ -37,11 +37,16 @@
         <h1 class="text-3xl font-bold mb-4">{{ $artist->name }}</h1>
 
         {{-- メイン画像 --}}
-        <div class="w-full mb-6">
+        <div class="w-full mb-6 text-center"> {{-- text-center を追加 --}}
             @if ($artist->main_photo)
+                {{-- GLightbox (拡大表示) のリンク --}}
                 <a href="{{ asset('storage/' . $artist->main_photo) }}" class="glightbox">
+                    {{-- ★ 修正ポイント: 縦長写真対応 --}}
                     <img src="{{ asset('storage/' . $artist->main_photo) }}" 
-                        class="w-full max-h-96 object-cover rounded-lg shadow cursor-pointer">
+                        {{-- object-contain: 画像全体を収める。背景は黒。 --}}
+                        {{-- rounded-lg と w-full は維持 --}}
+                        {{-- max-h-96: 画面の2/3程度の高さに抑える。 --}}
+                        class="w-full max-h-96 object-contain rounded-lg shadow cursor-pointer bg-black">
                 </a>
             @else
                 <div class="w-full h-60 bg-gray-200 flex items-center justify-center rounded-lg">
@@ -156,7 +161,7 @@
         </div>
 
         {{-- イベント一覧 --}}
-        <div class="mt-10">
+        <div id="events" class="mt-10">
             <h2 class="text-2xl font-bold mb-4">ライブ・イベント一覧</h2>
 
             @if ($artist->events->isEmpty())
@@ -190,9 +195,22 @@
                             @if ($event->description)
                                 <p>{!! nl2br(e($event->description)) !!}</p>
                             @endif
-
+                                <div class="flex-shrink-0 text-right mt-3 md:mt-0 mb-4">
+                                    <a href="{{ route('events.show', $event->id) }}" 
+                                    class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-bold text-base shadow-md transform hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 group w-full md:w-auto">
+                                        
+                                        {{-- ボタンテキスト --}}
+                                        詳細ページへ
+                                        
+                                        {{-- 右矢印アイコン（ホバーで右に動く） --}}
+                                        <svg class="w-5 h-5 ml-2.5 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                        </svg>
+                                    </a>
+                                </div>
                             @auth
                                 @if (auth()->id() === $artist->user_id || auth()->user()->role === 'admin')
+                                    
                                     <div class="mt-2 flex gap-2">
                                         <a href="{{ route('events.edit', [$artist, $event]) }}" class="text-blue-600 hover:underline">編集</a>
                                         <form action="{{ route('events.destroy', [$artist, $event]) }}" method="POST" onsubmit="return confirm('本当に削除しますか？');">

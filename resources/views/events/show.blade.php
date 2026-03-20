@@ -1,11 +1,35 @@
 <x-app-layout>
     <div class="max-w-4xl mx-auto px-4 py-10">
 
-        {{-- 戻るボタン --}}
-        <div class="mb-4">
-            <a href="{{ route('events.index') }}"
-               class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow">
-               ← イベント一覧に戻る
+        {{-- 戻るボタンとシェアボタンの並び --}}
+        <div class="flex justify-between items-center mb-6">
+            {{-- 修正：全イベント一覧ではなく、そのアーティストの詳細ページへ戻るように変更 --}}
+            <a href="{{ route('artist.show', $event->artist) }}"
+               class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow text-sm transition">
+                ← {{ $event->artist->name }} のページに戻る
+            </a>
+
+            {{-- X シェアボタン (省略なし) --}}
+            @php
+                $eventDate = \Carbon\Carbon::parse($event->event_date)->format('Y年m月d日');
+                $shareText = urlencode(
+                    "【ソロアーティストマップ：イベント情報】\n" .
+                    "イベント：{$event->title}\n" .
+                    "開催日：{$eventDate}\n" .
+                    "会場：{$event->venue}\n" .
+                    "アーティスト：{$event->artist->name}\n"
+                );
+                $shareUrl = urlencode(Request::url());
+            @endphp
+
+            <a href="https://twitter.com/intent/tweet?text={{ $shareText }}&url={{ $shareUrl }}&hashtags=ソロアーティストマップ"
+               target="_blank"
+               rel="nofollow noopener"
+               class="bg-black hover:opacity-80 text-white px-4 py-2 rounded-full flex items-center shadow transition">
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+                </svg>
+                <span class="text-xs font-bold">Xでシェア</span>
             </a>
         </div>
 
@@ -102,9 +126,10 @@
                        class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow transition duration-200">
                         🎵 アーティストページを見る
                     </a>
-                    <a href="{{ route('events.index') }}"
+                    {{-- 修正：全イベントではなく、アーティスト詳細のイベントセクション（アンカー）へ飛ばす --}}
+                    <a href="{{ route('artist.show', $event->artist) }}#events"
                        class="inline-flex items-center justify-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg shadow transition duration-200">
-                        📅 他のイベントを見る
+                        📅 このアーティストの他のイベント
                     </a>
                 </div>
             </div>

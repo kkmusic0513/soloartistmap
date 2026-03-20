@@ -1,6 +1,24 @@
 <x-app-layout>
     <div class="max-w-6xl mx-auto px-4 py-6">
 
+        {{-- 成功メッセージの表示エリア --}}
+        @if (session('success'))
+            <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative shadow-sm" role="alert">
+                <span class="block sm:inline font-bold">✨ {{ session('success') }}</span>
+            </div>
+        @endif
+
+        {{-- バリデーションエラーの表示エリア --}}
+        @if ($errors->any())
+            <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <ul class="list-disc list-inside text-sm">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         {{-- 戻るボタン --}}
         <div class="mb-4">
             <a href="{{ route('dashboard') }}"

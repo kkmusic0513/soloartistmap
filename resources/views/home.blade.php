@@ -16,11 +16,30 @@
 
             @if($pickupArtist)
                 <div class="relative rounded-2xl overflow-hidden bg-gray-900 lg:grid lg:grid-cols-2 lg:gap-0 shadow-2xl">
-                    <div class="relative h-64 sm:h-72 md:h-96 lg:h-full">
-                        {{-- 画像パスは main_photo を参照 --}}
-                        <img class="absolute inset-0 w-full h-full object-cover" 
-                            src="{{ $pickupArtist->main_photo ? asset('storage/' . $pickupArtist->main_photo) : asset('images/default-artist.jpg') }}" 
-                            alt="{{ $pickupArtist->name }}">
+                    <div class="relative h-64 sm:h-72 md:h-96 lg:h-full bg-black overflow-hidden">
+                        {{-- 
+                            修正ポイント: 
+                            1. 背景にぼかした画像を配置（隙間を埋める演出）
+                            2. 前面に object-contain で本体を表示
+                        --}}
+                        
+                        @if($pickupArtist->main_photo)
+                            <!-- 背景のぼかし画像 -->
+                            <img class="absolute inset-0 w-full h-full object-cover blur-xl opacity-45 scale-110" 
+                                src="{{ asset('storage/' . $pickupArtist->main_photo) }}" 
+                                alt="">
+
+                            <!-- メイン画像（全体表示） -->
+                            <img class="relative w-full h-full object-contain p-4 lg:p-8" 
+                                src="{{ asset('storage/' . $pickupArtist->main_photo) }}" 
+                                alt="{{ $pickupArtist->name }}">
+                        @else
+                            <!-- デフォルト画像 -->
+                            <img class="absolute inset-0 w-full h-full object-cover" 
+                                src="{{ asset('images/default-artist.jpg') }}" 
+                                alt="No Image">
+                        @endif
+
                         <div class="absolute inset-0 bg-gradient-to-r from-gray-900/50 to-transparent lg:hidden"></div>
                     </div>
                     
@@ -157,14 +176,28 @@
                         class="px-2 flex-shrink-0"
                         :style="`width: ${itemWidth}px`"
                     >
-                        <a href="{{ route('artist.show', $artist) }}" class="block border rounded p-2 bg-white shadow hover:shadow-lg transition-shadow">
+                        <a href="{{ route('artist.show', $artist) }}" class="block border rounded p-2 bg-white shadow hover:shadow-lg transition-shadow h-full">
                             @if($artist->main_photo)
-                                <img
-                                    src="{{ asset('storage/'.$artist->main_photo) }}"
-                                    class="w-full h-40 object-cover rounded"
-                                >
+                                {{-- 
+                                    修正ポイント: 
+                                    1. bg-gray-900 (または bg-black) で余白を埋める
+                                    2. object-contain で画像全体を表示
+                                    3. h-40 (またはお好みの高さ) を維持してスライダーの縦幅を統一
+                                --}}
+                                <div class="w-full h-40 bg-gray-900 rounded overflow-hidden flex items-center justify-center">
+                                    <img
+                                        src="{{ asset('storage/'.$artist->main_photo) }}"
+                                        class="max-w-full max-h-full object-contain"
+                                    >
+                                </div>
+                            @else
+                                {{-- 画像がない場合のプレースホルダー --}}
+                                <div class="w-full h-40 bg-gray-200 flex items-center justify-center rounded">
+                                    <span class="text-gray-400 text-xs">No Image</span>
+                                </div>
                             @endif
-                            <p class="font-semibold mt-2">{{ $artist->name }}</p>
+                            
+                            <p class="font-semibold mt-2 text-sm truncate">{{ $artist->name }}</p>
                         </a>
                     </div>
                 @endforeach
@@ -564,33 +597,38 @@
             @else
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach ($artists as $artist)
-                        <div class="bg-white shadow rounded-lg overflow-hidden">
-                            <a href="{{ route('artist.show', $artist->id) }}" class="block bg-white hover:shadow-lg transition">
-                                {{-- サムネイル --}}
-                                @php
-                                    $photos = array_filter([
-                                        $artist->main_photo,
-                                        // $artist->sub_photo_1,
-                                        // $artist->sub_photo_2,
-                                    ]);
-                                @endphp
-
+                        <div class="bg-white shadow rounded-lg overflow-hidden flex flex-col">
+                            <a href="{{ route('artist.show', $artist->id) }}" class="block bg-white hover:shadow-lg transition flex-grow">
+                                
+                                {{-- ★ サムネイル表示部分の修正 --}}
                                 @if($artist->main_photo)
-                                    <img src="{{ asset('storage/' . $artist->main_photo) }}" class="w-full h-40 object-cover mb-2">
+                                    <div class="w-full h-60 bg-gray-900 flex items-center justify-center overflow-hidden">
+                                        <img src="{{ asset('storage/' . $artist->main_photo) }}" 
+                                            class="max-w-full max-h-full object-contain">
+                                    </div>
+                                @else
+                                    {{-- 画像がない場合のプレースホルダー（高さ h-60 を維持） --}}
+                                    <div class="w-full h-60 bg-gray-200 flex items-center justify-center">
+                                        <span class="text-gray-400">No Image</span>
+                                    </div>
                                 @endif
-
 
                                 {{-- カード本体 --}}
                                 <div class="p-4">
-                                    <h3 class="font-bold text-lg mb-2">{{ $artist->name }}</h3>
+                                    {{-- 名前が長くても1行で収まるように truncate を追加 --}}
+                                    <h3 class="font-bold text-lg mb-2 truncate text-gray-800">{{ $artist->name }}</h3>
                                     <p class="text-sm text-gray-600">
-                                        {{-- 都道府県の表示修正 --}}
+                                        {{-- 都道府県 --}}
                                         @if(is_array($artist->prefecture))
                                             {{ implode('・', $artist->prefecture) }}
                                         @else
                                             {{ $artist->prefecture }}
-                                        @endif / 
-                                        {{ is_array($artist->genre) ? implode(', ', $artist->genre) : $artist->genre }}
+                                        @endif
+                                        <span class="mx-1">/</span>
+                                        {{-- ジャンル --}}
+                                        <span class="text-blue-600">
+                                            {{ is_array($artist->genre) ? implode(', ', $artist->genre) : $artist->genre }}
+                                        </span>
                                     </p>
                                 </div>
                             </a>

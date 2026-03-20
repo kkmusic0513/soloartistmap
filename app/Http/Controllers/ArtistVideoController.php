@@ -14,13 +14,14 @@ class ArtistVideoController extends Controller
 
     private function convertYouTubeUrl(string $url): ?string
     {
-        // 動画IDを正規表現で抽出
-        if (preg_match('/(?:v=|youtu\.be\/)([\w-]+)/', $url, $matches)) {
+        // 1. 通常のURL、短縮URL、そして「埋め込み(embed)URL」すべてからIDを抽出できるように修正
+        // パターンに embed\/ を追加
+        if (preg_match('/(?:v=|youtu\.be\/|embed\/)([\w-]+)/', $url, $matches)) {
             $videoId = $matches[1];
             return 'https://www.youtube.com/embed/' . $videoId;
         }
 
-        return null; // URLが無効な場合
+        return null;
     }
 
 
@@ -28,7 +29,7 @@ class ArtistVideoController extends Controller
     {
         $this->authorize('update', $artist);
 
-        $videos = $artist->videos()->orderBy('created_at', 'desc')->get();
+        $videos = $artist->videos()->orderBy('created_at', 'desc')->paginate(10);
 
         return view('videos.index', compact('artist', 'videos'));
     }
@@ -65,8 +66,8 @@ class ArtistVideoController extends Controller
         ]);
 
         return redirect()
-            ->route('dashboard')
-            ->with('success', 'YouTube動画を登録しました');
+        ->route('artists.videos.create', $artist)
+        ->with('success', 'YouTube動画を登録しました！');
     }
 
 
@@ -109,8 +110,8 @@ class ArtistVideoController extends Controller
             'title' => $request->title,
         ]);
 
-        return redirect()->route('artists.videos.index', $artist)
-                        ->with('success', '動画を更新しました');
+        return redirect()->route('artists.videos.create', $artist)
+                    ->with('success', '動画を更新しました');
     }
 
     public function destroy(Artist $artist, $videoId)
