@@ -10,7 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\DmController;
 use App\Http\Controllers\ArtistVideoController;
-
+use App\Http\Controllers\InformationController;
 
 
 // --- TOPページ ---
@@ -92,10 +92,18 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/artists', [AdminArtistController::class, 'index'])->name('admin.artists.index');
     Route::post('/artists/{id}/approve', [AdminArtistController::class, 'approve'])->name('admin.artists.approve');
     Route::post('/artists/{id}/disapprove', [AdminArtistController::class, 'disapprove'])->name('admin.artists.disapprove');
-    
-    // ★ここを正確に追記してください
-    Route::post('/artists/{id}/toggle-pickup', [AdminArtistController::class, 'togglePickup'])
-        ->name('admin.artists.toggle-pickup');
+    Route::post('/artists/{id}/toggle-pickup', [AdminArtistController::class, 'togglePickup'])->name('admin.artists.toggle-pickup');
+
+    // --- 追加：お知らせ管理 ---
+    Route::get('/informations', [InformationController::class, 'index'])->name('admin.informations.index');
+    Route::get('/informations/create', [InformationController::class, 'create'])->name('admin.informations.create');
+    Route::post('/informations', [InformationController::class, 'store'])->name('admin.informations.store');
+    Route::get('/informations/{information}', [InformationController::class, 'show'])->name('informations.show');
+    Route::delete('/informations/{information}', [InformationController::class, 'destroy'])->name('admin.informations.destroy');
+    // 編集画面
+    Route::get('/informations/{information}/edit', [InformationController::class, 'edit'])->name('admin.informations.edit');
+    // 更新処理
+    Route::put('/informations/{information}', [InformationController::class, 'update'])->name('admin.informations.update');
 });
 
 require __DIR__.'/auth.php';

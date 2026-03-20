@@ -8,7 +8,8 @@
                 <!-- 左側: サイトタイトルと使い方ガイド -->
                 <div class="flex flex-col sm:flex-row items-center sm:items-start space-y-2 sm:space-y-0 sm:space-x-6">
                     <a href="{{ route('home') }}" class="text-white text-lg lg:text-xl font-bold text-gray-800">
-                        {{ config('app.name', '全国ソロアーティストマップ') }}
+                        {{-- {{ config('app.name', '全国ソロアーティストマップ') }} --}}
+                        全国ソロアーティストマップ
                     </a>
                     <a href="{{ route('help') }}" class="bg-indigo-500 hover:bg-indigo-600 text-white text-xs lg:text-sm font-semibold px-2 py-1 lg:px-3 lg:py-1 rounded shadow whitespace-nowrap">
                         使い方ガイド

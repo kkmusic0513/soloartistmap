@@ -11,6 +11,7 @@ use App\Models\ArtistVideo;
 use App\Models\Event;
 use App\Models\User;
 use App\Mail\ArtistApprovedMail;
+use App\Models\Information;
 use Image;
 
 class ArtistController extends Controller
@@ -46,6 +47,12 @@ class ArtistController extends Controller
 
         // --- 3. メインの検索一覧用 ---
         $query = (clone $baseQuery);
+
+        // --- 0. お知らせデータの取得（追加） ---
+        $informations = Information::where('is_public', true)
+            ->orderBy('created_at', 'desc')
+            ->take(5) // 最新5件
+            ->get();
 
         // 都道府県で絞り込み
         if (!empty($prefecture)) {
@@ -91,6 +98,7 @@ class ArtistController extends Controller
             ->get();
 
         return view('home', [
+            'informations' => $informations,
             'artists' => $artists,
             'pickupArtist' => $pickupArtist, // 追加
             'latestArtists' => $latestArtists,

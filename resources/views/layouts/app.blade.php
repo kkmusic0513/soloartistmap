@@ -7,7 +7,8 @@
 
         {{-- <title>{{ config('app.name', 'Laravel') }}</title> --}}
         {{-- タイトルを動的に --}}
-        <title>@yield('title', config('app.name', 'ソロアーティストマップ'))</title>
+        {{-- <title>@yield('title', config('app.name', 'ソロアーティストマップ'))</title> --}}
+        <title>全国ソロアーティストマップ（β版）|　ソロアーティスト　弾き語り　ライブ情報　シンガーソングライター　東京　大阪　名古屋</title>
         
         <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 

@@ -158,7 +158,61 @@
             </div>
         </div>
 
-    
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+            <div class="relative overflow-hidden rounded-2xl shadow-xl">
+                <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 opacity-90"></div>
+                <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,...');"></div>
+
+                <div class="relative px-8 py-10 md:px-16 md:py-12 flex flex-col md:flex-row items-center justify-between">
+                    <div class="mb-6 md:mb-0 md:mr-8 text-center md:text-left">
+                        <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold tracking-wider uppercase mb-3">
+                            Coming Soon / 企画始動
+                        </span>
+                        <h2 class="text-3xl md:text-4xl font-black text-white mb-4 leading-tight">
+                            Solo Artist Map <br>
+                            <span class="text-yellow-300 underline decoration-wavy">Real Live Event</span> 開催！？
+                        </h2>
+                        <p class="text-indigo-100 text-lg font-medium max-w-xl">
+                            画面の中を飛び出して、リアルの場所で繋がる時間を。 <br>
+                            出演希望・イベンター様・会場情報を募集予定です。<br>
+                            各都道府県でサポートバンドメンバーも募集しますのでお声掛け頂ければ先にリストに入れておきます！
+                        </p>
+                    </div>
+
+                    <div class="flex-shrink-0">
+                        <a href="https://x.com/kk_jazzmaster" target="_blank"
+                        class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-full text-indigo-700 bg-white hover:bg-indigo-50 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                            📢 管理人に連絡
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- 告知バナーの上などに配置 --}}
+        @if($informations->isNotEmpty())
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h3 class="text-lg font-bold mb-4 flex items-center">
+                    <span class="bg-blue-100 text-blue-600 p-1 rounded mr-2">📢</span> 管理人からのお知らせ
+                </h3>
+                <ul class="space-y-3">
+                    @foreach($informations as $info)
+                        <li class="flex items-start sm:items-center flex-col sm:flex-row border-b border-gray-50 pb-2 last:border-0">
+                            <span class="text-sm text-gray-500 mr-4">{{ $info->created_at->format('Y.m.d') }}</span>
+                            <span class="px-2 py-0.5 rounded text-xs font-bold mr-3 
+                                {{ $info->category == 'event' ? 'bg-pink-100 text-pink-600' : 'bg-gray-100 text-gray-600' }}">
+                                {{ strtoupper($info->category) }}
+                            </span>
+                            <a href="{{ route('informations.show', $info->id) }}" class="text-gray-800 hover:text-blue-600 transition font-bold text-lg">
+                                {{ $info->title }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+        @endif
         
         <h2 class="text-xl font-bold border-l-4 border-blue-500 pl-4 mb-4">新着アーティスト</h2>
 

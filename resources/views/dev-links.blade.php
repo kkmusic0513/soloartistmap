@@ -53,5 +53,13 @@
         <a href="{{ route('artist.create') }}">アーティスト登録フォーム</a>
     </section>
 
+    <section>
+        <h2>🎛 管理用</h2>
+        <a href="{{ route('admin.artists.index') }}">アーティスト管理一覧</a>
+        {{-- route()関数で名前付きルートを呼び出す --}}
+        <a href="{{ route('admin.informations.create') }}" style="border-color: #ffc107; background: #fffdf5;">📢 お知らせ作成フォーム</a>
+        <a href="{{ route('admin.informations.index') }}">📋 お知らせ管理（一覧・削除）</a>
+    </section>
+
 </body>
 </html>
