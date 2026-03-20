@@ -24,6 +24,8 @@ class ArtistController extends Controller
             'approvedList',
             'home',
             'show',
+            'videos', // 追加
+            'events', // 追加
         ]);
     }
 
