@@ -170,6 +170,7 @@ class ArtistController extends Controller
             'twitter_link' => 'nullable|url|max:255',
             'instagram_link' => 'nullable|url',
             'tiktok_link'    => 'nullable|url',
+            'niconico_link' => 'nullable|url',
             'is_public'      => 'nullable|boolean', // ← 追加
         ]);
 
@@ -266,6 +267,7 @@ class ArtistController extends Controller
                 'twitter_link' => 'nullable|url',
                 'instagram_link' => 'nullable|url',
                 'tiktok_link'    => 'nullable|url',
+                'niconico_link' => 'nullable|url',
                 'delete_sub_photo_1' => 'nullable|boolean',
                 'delete_sub_photo_2' => 'nullable|boolean',
                 'is_public'    => 'nullable|boolean',

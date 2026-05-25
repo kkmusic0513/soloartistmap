@@ -87,8 +87,7 @@ Route::get('/dev-links', function () {
     return view('dev-links'); 
 })->middleware('auth');
 
-Route::get('admin/informations', [InformationController::class, 'index'])->name('admin.informations.index');
-Route::get('admin/informations/{information}', [InformationController::class, 'show'])->name('informations.show');
+
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/artists', [AdminArtistController::class, 'index'])->name('admin.artists.index');
@@ -97,6 +96,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/artists/{id}/toggle-pickup', [AdminArtistController::class, 'togglePickup'])->name('admin.artists.toggle-pickup');
 
     // --- 追加：お知らせ管理 ---
+
+    Route::get('/informations', [InformationController::class, 'index'])->name('admin.informations.index');
     
     Route::get('/informations/create', [InformationController::class, 'create'])->name('admin.informations.create');
     Route::post('/informations', [InformationController::class, 'store'])->name('admin.informations.store');
@@ -108,4 +109,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::put('/informations/{information}', [InformationController::class, 'update'])->name('admin.informations.update');
 });
 
+Route::get('admin/informations/{information}', [InformationController::class, 'show'])->name('informations.show');
+
 require __DIR__.'/auth.php';
+

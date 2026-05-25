@@ -24,6 +24,7 @@ class Artist extends Model
         'twitter_link',
         'instagram_link',
         'tiktok_link',
+        'niconico_link',
         'is_public',
     ];
 

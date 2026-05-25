@@ -39,7 +39,7 @@
                 {{-- 【追加】外部リンクがある場合、目立つアクションボタンを表示 --}}
                 @if($information->external_url)
                     <div class="mb-12 p-6 bg-blue-50 rounded-2xl border border-blue-100 text-center">
-                        <p class="text-blue-800 font-bold mb-4">詳細・お申し込みは以下のリンク先をご確認ください</p>
+                        <p class="text-blue-800 font-bold mb-4">詳細は以下のリンク先をご確認ください</p>
                         <a href="{{ $information->external_url }}" 
                            target="_blank" 
                            rel="noopener noreferrer" 

@@ -122,6 +122,12 @@
                         class="w-full border rounded px-3 py-2">
                 </div>
                 <div>
+                    <label class="block font-medium mb-1">ニコニコ動画リンク</label>
+                    <input type="url" name="niconico_link" value="{{ old('niconico_link') }}"
+                        placeholder="https://www.nicovideo.jp/user/..."
+                        class="w-full border rounded px-3 py-2">
+                </div>
+                <div>
                     <label class="block font-medium mb-1">X(Twitter)リンク</label>
                     <input type="url" name="twitter_link" value="{{ old('twitter_link') }}" 
                         placeholder="https://x.com/..."
