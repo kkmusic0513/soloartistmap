@@ -61,7 +61,7 @@ Route::resource('artists.videos', ArtistVideoController::class)
 
 
 // DM機能
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dm/{user}', [DmController::class, 'show'])->name('dm.show');
     Route::post('/dm/{user}', [DmController::class, 'send'])->name('dm.send');
 });
@@ -87,6 +87,8 @@ Route::get('/dev-links', function () {
     return view('dev-links'); 
 })->middleware('auth');
 
+Route::get('admin/informations', [InformationController::class, 'index'])->name('admin.informations.index');
+Route::get('admin/informations/{information}', [InformationController::class, 'show'])->name('informations.show');
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/artists', [AdminArtistController::class, 'index'])->name('admin.artists.index');
@@ -95,10 +97,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/artists/{id}/toggle-pickup', [AdminArtistController::class, 'togglePickup'])->name('admin.artists.toggle-pickup');
 
     // --- 追加：お知らせ管理 ---
-    Route::get('/informations', [InformationController::class, 'index'])->name('admin.informations.index');
+    
     Route::get('/informations/create', [InformationController::class, 'create'])->name('admin.informations.create');
     Route::post('/informations', [InformationController::class, 'store'])->name('admin.informations.store');
-    Route::get('/informations/{information}', [InformationController::class, 'show'])->name('informations.show');
+    
     Route::delete('/informations/{information}', [InformationController::class, 'destroy'])->name('admin.informations.destroy');
     // 編集画面
     Route::get('/informations/{information}/edit', [InformationController::class, 'edit'])->name('admin.informations.edit');
